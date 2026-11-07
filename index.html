@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Therapy Pages Coloring Book</title>
+
+<style>
+
+/* =========================
+
+   THERAPY PAGES BRAND COLORS
+
+========================= */
+
+:root {
+
+  --pink: #e75491;
+
+  --dark-pink: #b83270;
+
+  --light-pink: #fff0f6;
+
+  --cream: #fffafc;
+
+  --red: #d94b67;
+
+  --text: #49333e;
+
+  --white: #ffffff;
+
+  --border: #f1d4e2;
+
+}
+
+* {
+
+  box-sizing: border-box;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+html {
+
+  scroll-behavior: smooth;
+
+}
+
+body {
+
+  font-family: "Trebuchet MS", Arial, sans-serif;
+
+  background: var(--cream);
+
+  color: var(--text);
+
+  line-height: 1.6;
+
+}
+
+button, input, textarea, select {
+
+  font: inherit;
+
+}
+
+button {
+
+  cursor: pointer;
+
+}
+
+a {
+
+  text-decoration: none;
+
+  color: inherit;
+
+}
+
+img {
+
+  max-width: 100%;
+
+}
+
+/* =========================
+
+   HEADER
+
+========================= */
+
+header {
+
+  background: white;
+
+  padding: 16px 6%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+.logo {
+
+  font-family: Georgia, serif;
+
+  font-size: 25px;
+
+  font-weight: bold;
+
+  color: var(--dark-pink);
+
+}
+
+.logo span {
+
+  display: block;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 11px;
+
+  letter-spacing: 3px;
+
+  text-align: center;
+
+}
+
+nav {
+
+  display: flex;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+}
+
+nav a {
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+}
+
+nav a:hover {
+
+  color: var(--pink);
+
+}
+
+/* =========================
+
+   BUTTONS
+
+========================= */
+
+.btn {
+
+  display: inline-block;
+
+  padding: 12px 20px;
+
+  border: none;
+
+  border-radius: 30px;
+
+  background: var(--pink);
+
+  color: white;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+
+}
+
+.btn:hover {
+
+  background: var(--dark-pink);
+
+  transform: translateY(-2px);
+
+}
+
+.btn-outline {
+
+  background: white;
+
+  color: var(--dark-pink);
+
+  border: 1px solid var(--pink);
+
+}
+
+.btn-outline:hover {
+
+  background: var(--light-pink);
+
+  color: var(--dark-pink);
+
+}
+
+.btn-small {
+
+  padding: 9px 14px;
+
+  font-size: 13px;
+
+}
+
+/* =========================
+
+   HERO SECTION
+
+========================= */
+
+.hero {
+
+  background: var(--light-pink);
+
+  padding: 65px 6%;
+
+  display: grid;
+
+  grid-template-columns: 1.2fr 1fr;
+
+  gap: 35px;
+
+  align-items: center;
+
+}
+
+.hero-text {
+
+  max-width: 600px;
+
+}
+
+.eyebrow {
+
+  color: var(--dark-pink);
+
+  font-weight: bold;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+
+  font-size: 12px;
+
+}
+
+.hero h1 {
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(35px, 5vw, 60px);
+
+  line-height: 1.15;
+
+  color: var(--dark-pink);
+
+  margin: 15px 0;
+
+}
+
+.hero p {
+
+  margin-bottom: 25px;
+
+}
+
+.hero-image {
+
+  width: 100%;
+
+  height: 350px;
+
+  object-fit: cover;
+
+  border-radius: 30px;
+
+  border: 8px solid white;
+
+  box-shadow: 0 10px 30px #b8327020;
+
+}
+
+/* =========================
+
+   SECTION STYLING
+
+========================= */
+
+section {
+
+  padding: 65px 6%;
+
+}
+
+.section-heading {
+
+  text-align: center;
+
+  margin-bottom: 35px;
+
+}
+
+.section-heading h2 {
+
+  font-family: Georgia, serif;
+
+  color: var(--dark-pink);
+
+  font-size: 35px;
+
+}
+
+.section-heading p {
+
+  color: #856a78;
+
+  margin-top: 8px;
+
+}
+
+.category-links {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 35px;
+
+}
+
+.category-links a {
+
+  padding: 10px 20px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 30px;
+
+  background: white;
+
+  font-weight: bold;
+
+  font-size: 13px;
+
+}
+
+.category-links a:hover {
+
+  background: var(--light-pink);
+
+}
+
+/* =========================
+
+   PRODUCT CARDS
+
+========================= */
+
+.product-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 25px;
+
+}
+
+.product-card {
+
+  background: white;
+
+  border: 1px solid var(--border);
+
+  border-radius: 22px;
+
+  overflow: hidden;
+
+  transition: 0.2s;
+
+}
+
+.product-card:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow: 0 10px 25px #b8327015;
+
+}
+
+.product-image {
+
+  width: 100%;
+
+  height: 270px;
+
+  object-fit: cover;
+
+  background: var(--light-pink);
+
+}
+
+.product-info {
+
+  padding: 20px;
+
+}
+
+.product-category {
+
+  color: var(--pink);
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  font-weight: bold;
+
+  letter-spacing: 1px;
+
+}
+
+.product-info h3 {
+
+  margin: 7px 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 21px;
+
+}
+
+.product-description {
+
+  color: #856d79;
+
+  font-size: 13px;
+
+  min-height: 60px;
+
+}
+
+.product-price {
+
+  font-size: 21px;
+
+  font-weight: bold;
+
+  color: var(--dark-pink);
+
+  margin: 12px 0;
+
+}
+
+.product-actions {
+
+  display: flex;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+}
+
+.product-actions button {
+
+  flex: 1;
+
+}
+
+/* =========================
+
+   CUSTOM BOOK SECTION
+
+========================= */
+
+.custom-section {
+
+  background: var(--light-pink);
+
+}
+
+.custom-content {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 40px;
+
+  align-items: center;
+
+}
+
+.custom-content img {
+
+  width: 100%;
+
+  height: 350px;
+
+  object-fit: cover;
+
+  border-radius: 25px;
+
+  border: 7px solid white;
+
+}
+
+.custom-content h2 {
+
+  font-family: Georgia, serif;
+
+  font-size: 36px;
+
+  color: var(--dark-pink);
+
+  margin-bottom: 15px;
+
+}
+
+.custom-content p {
+
+  margin-bottom: 20px;
+
+}
+
+/* =========================
+
+   CART
+
+========================= */
+
+.cart-section {
+
+  background: white;
+
+}
+
+.cart-box {
+
+  max-width: 800px;
+
+  margin: auto;
+
+  background: var(--light-pink);
+
+  border-radius: 25px;
+
+  padding: 25px;
+
+}
+
+.cart-item {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 15px 0;
+
+  border-bottom: 1px solid var(--border);
+
+}
+
+.cart-item-info {
+
+  flex: 1;
+
+}
+
+.cart-item-info strong {
+
+  display: block;
+
+}
+
+.cart-item-info small {
+
+  color: #856a78;
+
+}
+
+.quantity-controls {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+.quantity-controls button {
+
+  border: none;
+
+  background: white;
+
+  border-radius: 50%;
+
+  width: 30px;
+
+  height: 30px;
+
+  color: var(--dark-pink);
+
+  font-weight: bold;
+
+}
+
+.remove-btn {
+
+  background: none;
+
+  border: none;
+
+  color: var(--red);
+
+  font-size: 12px;
+
+}
+
+.cart-total {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  font-size: 22px;
+
+  font-weight: bold;
+
+  margin: 20px 0;
+
+}
+
+.cart-empty {
+
+  text-align: center;
+
+  padding: 25px 0;
+
+}
+
+.cart-actions {
+
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+}
+
+/* =========================
+
+   CUSTOM ORDER FORM
+
+========================= */
+
+.custom-form {
+
+  max-width: 700px;
+
+  margin: auto;
+
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 25px;
+
+  border: 1px solid var(--border);
+
+}
+
+.form-group {
+
+  margin-bottom: 18px;
+
+}
+
+.form-group label {
+
+  display: block;
+
+  font-weight: bold;
+
+  font-size: 14px;
+
+  margin-bottom: 7px;
+
+}
+
+.form-group input,
+
+.form-group textarea,
+
+.form-group select {
+
+  width: 100%;
+
+  padding: 13px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  background: var(--cream);
+
+  outline: none;
+
+}
+
+.form-group input:focus,
+
+.form-group textarea:focus,
+
+.form-group select:focus {
+
+  border-color: var(--pink);
+
+}
+
+.form-group textarea {
+
+  resize: vertical;
+
+  min-height: 100px;
+
+}
+
+/* =========================
+
+   ABOUT
+
+========================= */
+
+.about-section {
+
+  text-align: center;
+
+  max-width: 800px;
+
+  margin: auto;
+
+}
+
+.about-section h2 {
+
+  font-family: Georgia, serif;
+
+  font-size: 35px;
+
+  color: var(--dark-pink);
+
+  margin-bottom: 15px;
+
+}
+
+/* =========================
+
+   FOOTER
+
+========================= */
+
+footer {
+
+  background: #4a283a;
+
+  color: white;
+
+  text-align: center;
+
+  padding: 40px 6%;
+
+}
+
+footer h2 {
+
+  font-family: Georgia, serif;
+
+  margin-bottom: 10px;
+
+}
+
+.social-links {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 20px;
+
+  flex-wrap: wrap;
+
+  margin: 20px 0;
+
+}
+
+.social-links a {
+
+  color: #ffd2e6;
+
+  font-weight: bold;
+
+}
+
+footer small {
+
+  color: #e7c8d8;
+
+}
+
+/* =========================
+
+   WHATSAPP FLOATING BUTTON
+
+========================= */
+
+.whatsapp-float {
+
+  position: fixed;
+
+  bottom: 20px;
+
+  right: 20px;
+
+  z-index: 100;
+
+  background: #25D366;
+
+  color: white;
+
+  padding: 14px 20px;
+
+  border-radius: 50px;
+
+  font-weight: bold;
+
+  box-shadow: 0 5px 20px #0002;
+
+}
+
+/* =========================
+
+   RESPONSIVE DESIGN
+
+========================= */
+
+@media (max-width: 850px) {
+
+  .hero {
+
+    grid-template-columns: 1fr;
+
+    padding: 45px 5%;
+
+  }
+
+  .hero-image {
+
+    height: 300px;
+
+  }
+
+  .product-grid {
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  }
+
+  .custom-content {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  header {
+
+    justify-content: center;
+
+    text-align: center;
+
+  }
+
+  nav {
+
+    justify-content: center;
+
+  }
+
+}
+
+@media (max-width: 550px) {
+
+  section {
+
+    padding: 45px 5%;
+
+  }
+
+  .product-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .product-image {
+
+    height: 300px;
+
+  }
+
+  .hero h1 {
+
+    font-size: 39px;
+
+  }
+
+  .cart-item {
+
+    flex-wrap: wrap;
+
+  }
+
+  .custom-form {
+
+    padding: 20px;
+
+  }
+
+  .cart-actions .btn {
+
+    width: 100%;
+
+    text-align: center;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================
+
+     HEADER
+
+========================= -->
+
+<header>
+
+  <a href="#home" class="logo">
+
+    Therapy Pages
+
+    <span>COLORING BOOKS</span>
+
+  </a>
+
+  <nav>
+
+    <a href="#home">Home</a>
+
+    <a href="#kids">Kids</a>
+
+    <a href="#adult">Adults</a>
+
+    <a href="#custom">Custom Books</a>
+
+    <a href="#cart">My Basket 🛍️</a>
+
+  </nav>
+
+</header>
+
+<!-- =========================
+
+     HOME
+
+========================= -->
+
+<main>
+
+<section class="hero" id="home">
+
+  <div class="hero-text">
+
+    <span class="eyebrow">
+
+      Welcome to Therapy Pages ❤️
+
+    </span>
+
+    <h1>
+
+      Color, Create & Make More Time for YOU
+
+    </h1>
+
+    <p>
+
+      Coloring books for little artists, grown-ups,
+
+      and every special occasion.
+
+      Find your next favorite coloring book
+
+      and let your creativity bloom.
+
+    </p>
+
+    <a href="#shop" class="btn">
+
+      Explore Our Collection
+
+    </a>
+
+    <a href="#custom" class="btn btn-outline">
+
+      Custom Books
+
+    </a>
+
+  </div>
+
+  <!-- CHANGE THIS IMAGE TO YOUR OWN PHOTO -->
+
+  <img
+
+    class="hero-image"
+
+    src="https://placehold.co/700x500/ffe1ef/b83270?text=Therapy+Pages"
+
+    alt="Therapy Pages Coloring Books"
+
+  >
+
+</section>
+
+<!-- =========================
+
+     SHOP
+
+========================= -->
+
+<section id="shop">
+
+  <div class="section-heading">
+
+    <span class="eyebrow">Find Your Favorite</span>
+
+    <h2>Our Coloring Collection</h2>
+
+    <p>
+
+      Something for every mood, age, and occasion.
+
+    </p>
+
+  </div>
+
+  <div class="category-links">
+
+    <a href="#kids">Kids Collection</a>
+
+    <a href="#adult">Adult Collection</a>
+
+    <a href="#custom">Custom Coloring Books</a>
+
+  </div>
+
+  <!-- =========================
+
+       KIDS COLLECTION
+
+  ========================= -->
+
+  <div id="kids">
+
+    <div class="section-heading">
+
+      <h2>🎀 Kids Collection</h2>
+
+      <p>
+
+        Little hands, big imagination!
+
+      </p>
+
+    </div>
+
+    <div class="product-grid" id="kids-products">
+
+      <!-- PRODUCTS ARE ADDED USING JAVASCRIPT -->
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+
+       ADULT COLLECTION
+
+  ========================= -->
+
+  <div id="adult" style="margin-top:65px;">
+
+    <div class="section-heading">
+
+      <h2>🌸 Adult Collection</h2>
+
+      <p>
+
+        A little coloring, a little peace, a little time for yourself.
+
+      </p>
+
+    </div>
+
+    <div class="product-grid" id="adult-products">
+
+      <!-- PRODUCTS ARE ADDED USING JAVASCRIPT -->
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================
+
+     CUSTOM COLORING BOOKS
+
+========================= -->
+
+<section class="custom-section" id="custom">
+
+  <div class="custom-content">
+
+    <div>
+
+      <span class="eyebrow">
+
+        Made Just For You ❤️
+
+      </span>
+
+      <h2>Custom Coloring Books</h2>
+
+      <p>
+
+        Make someone's special day even more memorable
+
+        with a personalized coloring book.
+
+      </p>
+
+      <p>
+
+        Perfect for birthdays, gifts, celebrations,
+
+        and any occasion worth remembering.
+
+      </p>
+
+      <a href="#custom-form" class="btn">
+
+        Request Your Custom Book
+
+      </a>
+
+    </div>
+
+    <!-- REPLACE WITH YOUR CUSTOM BOOK PICTURE -->
+
+    <img
+
+      src="https://placehold.co/700x500/ffe1ef/b83270?text=Custom+Coloring+Books"
+
+      alt="Custom Therapy Pages Coloring Books"
+
+    >
+
+  </div>
+
+</section>
+
+<!-- =========================
+
+     SHOPPING BASKET
+
+========================= -->
+
+<section class="cart-section" id="cart">
+
+  <div class="section-heading">
+
+    <span class="eyebrow">Your Favorites</span>
+
+    <h2>My Shopping Basket 🛍️</h2>
+
+    <p>
+
+      Select your books and send your order through WhatsApp.
+
+    </p>
+
+  </div>
+
+  <div class="cart-box">
+
+    <div id="cart-items">
+
+      <div class="cart-empty">
+
+        Your basket is empty. 💗
+
+        <br>
+
+        Browse our collection to add books.
+
+      </div>
+
+    </div>
+
+    <div class="cart-total">
+
+      <span>Total:</span>
+
+      <span id="cart-total">J$0</span>
+
+    </div>
+
+    <div class="cart-actions">
+
+      <button
+
+        class="btn"
+
+        onclick="checkoutWhatsApp()"
+
+      >
+
+        Order Through WhatsApp
+
+      </button>
+
+      <button
+
+        class="btn btn-outline"
+
+        onclick="clearCart()"
+
+      >
+
+        Clear Basket
+
+      </button>
+
+    </div>
+
+    <p style="font-size:12px; margin-top:15px; color:#856a78;">
+
+      Your order will be sent to WhatsApp for confirmation.
+
+      Delivery and payment arrangements will be discussed
+
+      after your order is received.
+
+    </p>
+
+  </div>
+
+</section>
+
+<!-- =========================
+
+     CUSTOM REQUEST FORM
+
+========================= -->
+
+<section id="custom-form">
+
+  <div class="section-heading">
+
+    <span class="eyebrow">Let's Create Something Special</span>
+
+    <h2>Request a Custom Coloring Book</h2>
+
+    <p>
+
+      Tell us what you have in mind!
+
+    </p>
+
+  </div>
+
+  <form class="custom-form" id="customOrderForm">
+
+    <div class="form-group">
+
+      <label for="customerName">
+
+        Your Name
+
+      </label>
+
+      <input
+
+        type="text"
+
+        id="customerName"
+
+        placeholder="Enter your name"
+
+        required
+
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="customerPhone">
+
+        Your Contact Number
+
+      </label>
+
+      <input
+
+        type="tel"
+
+        id="customerPhone"
+
+        placeholder="Enter your phone number"
+
+        required
+
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="occasion">
+
+        Occasion
+
+      </label>
+
+      <select id="occasion" required>
+
+        <option value="">Select an occasion</option>
+
+        <option>Birthday</option>
+
+        <option>Graduation</option>
+
+        <option>Anniversary</option>
+
+        <option>Christmas</option>
+
+        <option>Gift</option>
+
+        <option>Other</option>
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="bookAge">
+
+        Coloring Book For
+
+      </label>
+
+      <select id="bookAge" required>
+
+        <option value="">Select an age group</option>
+
+        <option>Kids</option>
+
+        <option>Adults</option>
+
+        <option>All Ages</option>
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="customDetails">
+
+        Tell Us About Your Book
+
+      </label>
+
+      <textarea
+
+        id="customDetails"
+
+        placeholder="Theme, name to include, preferred colors, number of pages, or any special details..."
+
+        required
+
+      ></textarea>
+
+    </div>
+
+    <button class="btn" type="submit">
+
+      Send Custom Request
+
+    </button>
+
+  </form>
+
+</section>
+
+<!-- =========================
+
+     ABOUT THERAPY PAGES
+
+========================= -->
+
+<section>
+
+  <div class="about-section">
+
+    <span class="eyebrow">
+
+      A Little About Us
+
+    </span>
+
+    <h2>Welcome to Therapy Pages</h2>
+
+    <p>
+
+      Therapy Pages Coloring Book is all about creativity,
+
+      imagination, and making time to enjoy the little things.
+
+      From children's coloring books to adult collections
+
+      and personalized creations, there's something
+
+      for everyone.
+
+    </p>
+
+    <p style="margin-top:15px; font-weight:bold; color:#b83270;">
+
+      Custom coloring books for any occasion. ❤️
+
+    </p>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- =========================
+
+     FOOTER
+
+========================= -->
+
+<footer>
+
+  <h2>Therapy Pages Coloring Book</h2>
+
+  <p>
+
+    Color, create, and make more time for YOU.
+
+  </p>
+
+  <div class="social-links">
+
+    <!-- REPLACE THESE LINKS -->
+
+    <a href="https://instagram.com/"
+
+       target="_blank">
+
+      Instagram
+
+    </a>
+
+    <a href="https://tiktok.com/"
+
+       target="_blank">
+
+      TikTok
+
+    </a>
+
+    <a href="#custom">
+
+      Custom Orders
+
+    </a>
+
+  </div>
+
+  <small>
+
+    © <span id="year"></span> Therapy Pages.
+
+    All rights reserved.
+
+  </small>
+
+  <p style="margin-top:15px;">
+
+    Yours truly, Therapy Pages 💗
+
+  </p>
+
+</footer>
+
+<!-- =========================
+
+     FLOATING WHATSAPP
+
+========================= -->
+
+<a
+
+  href="#"
+
+  class="whatsapp-float"
+
+  onclick="openWhatsApp(); return false;"
+
+>
+
+  💬 WhatsApp
+
+</a>
+
+<!-- =========================
+
+     JAVASCRIPT
+
+========================= -->
+
+<script>
+
+/* =====================================
+
+   1. BUSINESS INFORMATION
+
+   EDIT THESE DETAILS FIRST.
+
+===================================== */
+
+// Replace with your WhatsApp number.
+
+//
+
+// IMPORTANT:
+
+// Include Jamaica's country code 1876.
+
+// Do not include +, spaces, or dashes.
+
+//
+
+// Example format:
+
+// 1876XXXXXXXX
+
+const WHATSAPP_NUMBER = "1876XXXXXXXX";
+
+// Your business name
+
+const BUSINESS_NAME = "Therapy Pages Coloring Book";
+
+/* =====================================
+
+   2. PRODUCT INFORMATION
+
+   Change the product names, prices,
+
+   descriptions, and image links.
+
+   Prices are examples in Jamaican dollars.
+
+   Use your own actual product pictures.
+
+===================================== */
+
+const products = [
+
+  // KIDS COLLECTION
+
+  {
+
+    id: 1,
+
+    name: "Kids Coloring Book",
+
+    category: "Kids",
+
+    price: 1500,
+
+    description: "Fun coloring pages for little artists.",
+
+    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Kids+Book"
+
+  },
+
+  {
+
+    id: 2,
+
+    name: "Animals Coloring Book",
+
+    category: "Kids",
+
+    price: 1500,
+
+    description: "Cute animals and creative adventures.",
+
+    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Animal+Book"
+
+  },
+
+  {
+
+    id: 3,
+
+    name: "Custom Kids Coloring Book",
+
+    category: "Kids",
+
+    price: 2500,
+
+    description: "A personalized coloring book made just for you.",
+
+    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Custom+Kids"
+
+  },
+
+  // ADULT COLLECTION
+
+  {
+
+    id: 4,
+
+    name: "Adult Coloring Book",
+
+    category: "Adults",
+
+    price: 2000,
+
+    description: "Relax, unwind, and enjoy some creative time.",
+
+    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Adult+Book"
+
+  },
+
+  {
+
+    id: 5,
+
+    name: "Floral Coloring Book",
+
+    category: "Adults",
+
+    price: 2000,
+
+    description: "Beautiful flowers and relaxing coloring pages.",
+
+    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Floral+Book"
+
+  },
+
+  {
+
+    id: 6,
+
+    name: "Self-Care Coloring Book",
+
+    category: "Adults",
+
+    price: 2500,
+
+    description: "Take a moment for yourself and get creative.",
+
+    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Self+Care"
+
+  }
+
+];
+
+/* =====================================
+
+   3. SHOPPING BASKET
+
+===================================== */
+
+let cart = [];
+
+/* =====================================
+
+   4. FORMAT JAMAICAN DOLLARS
+
+===================================== */
+
+function formatPrice(amount) {
+
+  return "J$" + amount.toLocaleString("en-JM");
+
+}
+
+/* =====================================
+
+   5. DISPLAY PRODUCTS
+
+===================================== */
+
+function displayProducts() {
+
+  const kidsContainer =
+
+    document.getElementById("kids-products");
+
+  const adultContainer =
+
+    document.getElementById("adult-products");
+
+  kidsContainer.innerHTML = "";
+
+  adultContainer.innerHTML = "";
+
+  products.forEach(product => {
+
+    const card = document.createElement("article");
+
+    card.className = "product-card";
+
+    card.innerHTML = `
+
+      <img
+
+        class="product-image"
+
+        src="${product.image}"
+
+        alt="${product.name}"
+
+        loading="lazy"
+
+      >
+
+      <div class="product-info">
+
+        <span class="product-category">
+
+          ${product.category} Collection
+
+        </span>
+
+        <h3>${product.name}</h3>
+
+        <p class="product-description">
+
+          ${product.description}
+
+        </p>
+
+        <div class="product-price">
+
+          ${formatPrice(product.price)}
+
+        </div>
+
+        <div class="product-actions">
+
+          <button
+
+            class="btn btn-small"
+
+            onclick="addToCart(${product.id})"
+
+          >
+
+            Add to Basket
+
+          </button>
+
+          <button
+
+            class="btn btn-outline btn-small"
+
+            onclick="orderSingle(${product.id})"
+
+          >
+
+            Order Now
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+    if (product.category === "Kids") {
+
+      kidsContainer.appendChild(card);
+
+    } else {
+
+      adultContainer.appendChild(card);
+
+    }
+
+  });
+
+}
+
+/* =====================================
+
+   6. ADD PRODUCTS TO BASKET
+
+===================================== */
+
+function addToCart(productId) {
+
+  const product = products.find(
+
+    item => item.id === productId
+
+  );
+
+  if (!product) return;
+
+  const existingItem = cart.find(
+
+    item => item.id === productId
+
+  );
+
+  if (existingItem) {
+
+    existingItem.quantity++;
+
+  } else {
+
+    cart.push({
+
+      ...product,
+
+      quantity: 1
+
+    });
+
+  }
+
+  renderCart();
+
+}
+
+/* =====================================
+
+   7. UPDATE BASKET
+
+===================================== */
+
+function renderCart() {
+
+  const cartContainer =
+
+    document.getElementById("cart-items");
+
+  const totalElement =
+
+    document.getElementById("cart-total");
+
+  cartContainer.innerHTML = "";
+
+  if (cart.length === 0) {
+
+    cartContainer.innerHTML = `
+
+      <div class="cart-empty">
+
+        Your basket is empty. 💗
+
+        <br>
+
+        Browse our collection to add books.
+
+      </div>
+
+    `;
+
+    totalElement.textContent = "J$0";
+
+    return;
+
+  }
+
+  let total = 0;
+
+  cart.forEach(item => {
+
+    const subtotal =
+
+      item.price * item.quantity;
+
+    total += subtotal;
+
+    const cartItem =
+
+      document.createElement("div");
+
+    cartItem.className = "cart-item";
+
+    cartItem.innerHTML = `
+
+      <div class="cart-item-info">
+
+        <strong>${item.name}</strong>
+
+        <small>
+
+          ${formatPrice(item.price)} each
+
+        </small>
+
+        <br>
+
+        <small>
+
+          Subtotal: ${formatPrice(subtotal)}
+
+        </small>
+
+      </div>
+
+      <div class="quantity-controls">
+
+        <button
+
+          onclick="changeQuantity(${item.id}, -1)"
+
+          aria-label="Decrease quantity"
+
+        >
+
+          −
+
+        </button>
+
+        <span>${item.quantity}</span>
+
+        <button
+
+          onclick="changeQuantity(${item.id}, 1)"
+
+          aria-label="Increase quantity"
+
+        >
+
+          +
+
+        </button>
+
+      </div>
+
+      <button
+
+        class="remove-btn"
+
+        onclick="removeFromCart(${item.id})"
+
+      >
+
+        Remove
+
+      </button>
+
+    `;
+
+    cartContainer.appendChild(cartItem);
+
+  });
+
+  totalElement.textContent =
+
+    formatPrice(total);
+
+}
+
+/* =====================================
+
+   8. CHANGE QUANTITY
+
+===================================== */
+
+function changeQuantity(productId, amount) {
+
+  const item = cart.find(
+
+    product => product.id === productId
+
+  );
+
+  if (!item) return;
+
+  item.quantity += amount;
+
+  if (item.quantity <= 0) {
+
+    removeFromCart(productId);
+
+    return;
+
+  }
+
+  renderCart();
+
+}
+
+/* =====================================
+
+   9. REMOVE PRODUCT
+
+===================================== */
+
+function removeFromCart(productId) {
+
+  cart = cart.filter(
+
+    item => item.id !== productId
+
+  );
+
+  renderCart();
+
+}
+
+/* =====================================
+
+   10. CLEAR BASKET
+
+===================================== */
+
+function clearCart() {
+
+  cart = [];
+
+  renderCart();
+
+}
+
+/* =====================================
+
+   11. WHATSAPP MESSAGE
+
+   Encode the message so spaces,
+
+   symbols, and line breaks work.
+
+===================================== */
+
+function sendWhatsApp(message) {
+
+  if (
+
+    !WHATSAPP_NUMBER ||
+
+    WHATSAPP_NUMBER.includes("X")
+
+  ) {
+
+    alert(
+
+      "Please add your real WhatsApp number in the website code first."
+
+    );
+
+    return;
+
+  }
+
+  const encodedMessage =
+
+    encodeURIComponent(message);
+
+  const whatsappURL =
+
+    "https://wa.me/" +
+
+    WHATSAPP_NUMBER +
+
+    "?text=" +
+
+    encodedMessage;
+
+  window.open(
+
+    whatsappURL,
+
+    "_blank",
+
+    "noopener,noreferrer"
+
+  );
+
+}
+
+/* =====================================
+
+   12. ORDER SINGLE PRODUCT
+
+===================================== */
+
+function orderSingle(productId) {
+
+  const product = products.find(
+
+    item => item.id === productId
+
+  );
+
+  if (!product) return;
+
+  const message =
+
+    `Good day, ${BUSINESS_NAME}! ❤️\n\n` +
+
+    `I would like to order:\n\n` +
+
+    `Book: ${product.name}\n` +
+
+    `Quantity: 1\n` +
+
+    `Price: ${formatPrice(product.price)}\n\n` +
+
+    `Please let me know how I can complete my order.`;
+
+  sendWhatsApp(message);
+
+}
+
+/* =====================================
+
+   13. CHECKOUT BASKET THROUGH WHATSAPP
+
+===================================== */
+
+function checkoutWhatsApp() {
+
+  if (cart.length === 0) {
+
+    alert(
+
+      "Your basket is empty. Please add a coloring book first."
+
+    );
+
+    return;
+
+  }
+
+  let total = 0;
+
+  let message =
+
+    `Good day, ${BUSINESS_NAME}! ❤️\n\n` +
+
+    `I would like to place an order:\n\n`;
+
+  cart.forEach(item => {
+
+    const subtotal =
+
+      item.price * item.quantity;
+
+    total += subtotal;
+
+    message +=
+
+      `📚 ${item.name}\n` +
+
+      `Quantity: ${item.quantity}\n` +
+
+      `Subtotal: ${formatPrice(subtotal)}\n\n`;
+
+  });
+
+  message +=
+
+    `TOTAL: ${formatPrice(total)}\n\n` +
+
+    `Please confirm availability and let me know ` +
+
+    `the payment, pickup, or delivery arrangements.\n\n` +
+
+    `Thank you! ❤️`;
+
+  sendWhatsApp(message);
+
+}
+
+/* =====================================
+
+   14. FLOATING WHATSAPP BUTTON
+
+===================================== */
+
+function openWhatsApp() {
+
+  const message =
+
+    `Good day, ${BUSINESS_NAME}! ❤️\n\n` +
+
+    `I would like to make an inquiry about your coloring books.`;
+
+  sendWhatsApp(message);
+
+}
+
+/* =====================================
+
+   15. CUSTOM COLORING BOOK REQUEST
+
+===================================== */
+
+document
+
+  .getElementById("customOrderForm")
+
+  .addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const name =
+
+      document.getElementById("customerName").value;
+
+    const phone =
+
+      document.getElementById("customerPhone").value;
+
+    const occasion =
+
+      document.getElementById("occasion").value;
+
+    const age =
+
+      document.getElementById("bookAge").value;
+
+    const details =
+
+      document.getElementById("customDetails").value;
+
+    const message =
+
+      `Good day, ${BUSINESS_NAME}! ❤️\n\n` +
+
+      `I would like to request a custom coloring book.\n\n` +
+
+      `Customer Name: ${name}\n` +
+
+      `Contact Number: ${phone}\n` +
+
+      `Occasion: ${occasion}\n` +
+
+      `Book For: ${age}\n\n` +
+
+      `Custom Details:\n${details}\n\n` +
+
+      `Please let me know the pricing and how I can proceed.`;
+
+    sendWhatsApp(message);
+
+  });
+
+/* =====================================
+
+   16. FOOTER YEAR
+
+===================================== */
+
+document.getElementById("year").textContent =
+
+  new Date().getFullYear();
+
+/* =====================================
+
+   17. START WEBSITE
+
+===================================== */
+
+displayProducts();
+
+renderCart();
+
+</script>
+
+</body>
+
+</html>
