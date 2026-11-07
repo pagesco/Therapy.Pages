@@ -284,7 +284,7 @@ nav a:hover {
 
   text-transform: uppercase;
 
-  font-size: 12px;
+  font-size: 13px;
 
 }
 
@@ -805,6 +805,42 @@ section {
 
 }
 
+/*  
+   Falling Hearts Animation 
+*/
+.falling-heart {
+    position: fixed;
+    top: -30px;
+    color: #e75491;
+    pointer-events: none;
+    z-index: 9999;
+    animation: heartFall linear forwards;
+    opacity: 0.7;
+}
+
+@keyframes heartFall {
+    0% {
+        transform: translateY(-30px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .falling-heart {
+        display: none;
+    }
+}
+
 /* =========================
 
    FOOTER
@@ -1036,7 +1072,7 @@ footer small {
 
     <a href="#custom">Custom Books</a>
 
-    <a href="#cart">My Basket 🛍️</a>
+    <a href="#cart">My Cart</a>
 
   </nav>
 
@@ -2372,6 +2408,30 @@ displayProducts();
 
 renderCart();
 
+</script>
+
+<script>
+function createFallingHeart() {
+    const heart = document.createElement("div");
+
+    heart.className = "falling-heart";
+    heart.innerHTML = "♥";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (12 + Math.random() * 18) + "px";
+    heart.style.animationDuration = (5 + Math.random() * 6) + "s";
+
+    const shades = ["#e75491", "#ffb6d5", "#b83270", "#f48fb1"];
+    heart.style.color = shades[Math.floor(Math.random() * shades.length)];
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 12000);
+}
+
+setInterval(createFallingHeart, 500);
 </script>
 
 </body>
