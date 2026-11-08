@@ -1757,7 +1757,7 @@ const products = [
 
     category: "Adults",
 
-    price: 6,500,
+    price: 6500,
 
     description: "Relax, unwind, and enjoy some creative time.",
 
@@ -1773,7 +1773,7 @@ const products = [
 
     category: "Adults",
 
-    price: ,
+    price: null ,
 
     description: "Beautiful illustrations of childhood memories and more. COMING SOON",
 
@@ -1789,7 +1789,7 @@ const products = [
 
     category: "Adults",
 
-    price: ,
+    price: null ,
 
     description: "Coloring pages of the schools in jamaica and more. COMING SOON",
 
@@ -1877,23 +1877,27 @@ function displayProducts() {
 
         <div class="product-price">
 
-          ${formatPrice(product.price)}
-
+           ${product.price == null ? "Coming Soon" : formatPrice(product.price)}
+        
         </div>
 
+              ${product.price == null ? "" : `
         <div class="product-actions">
-
           <button
-
             class="btn btn-small"
-
             onclick="addToCart(${product.id})"
-
           >
-
             Add to Basket
-
           </button>
+      
+          <button
+            class="btn btn-outline btn-small"
+            onclick="orderSingle(${product.id})"
+          >
+            Order Now
+          </button>
+        </div>
+      `}
 
           <button
 
