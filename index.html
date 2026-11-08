@@ -510,6 +510,29 @@ section {
 
 }
 
+/* ADD TO BASKET NOTIFICATION */
+
+.cart-notification {
+  position: fixed;
+  bottom: 85px;
+  right: 20px;
+  background: #b83270;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 30px;
+  box-shadow: 0 5px 20px #0002;
+  z-index: 10000;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: 0.3s;
+  pointer-events: none;
+}
+
+.cart-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* =========================
 
    CUSTOM BOOK SECTION
@@ -775,6 +798,12 @@ section {
 
 }
 
+.form-group input[type="radio"] {
+  width: auto;
+  padding: 0;
+  margin-right: 8px;
+}
+
 /* =========================
 
    ABOUT
@@ -1026,7 +1055,9 @@ footer small {
 </head>
 
 <body>
-
+<div id="cart-notification" class="cart-notification">
+  💗 Good Choice!
+</div>
 
 
 <!-- =========================
@@ -1914,39 +1945,39 @@ function displayProducts() {
 function addToCart(productId) {
 
   const product = products.find(
-
     item => item.id === productId
-
   );
 
   if (!product) return;
 
   const existingItem = cart.find(
-
     item => item.id === productId
-
   );
 
   if (existingItem) {
-
     existingItem.quantity++;
-
   } else {
-
     cart.push({
-
       ...product,
-
       quantity: 1
-
     });
-
   }
 
   renderCart();
 
-}
+  const notification = document.getElementById("cart-notification");
 
+  notification.textContent = `💗 ${product.name} added to your basket!`;
+
+  notification.classList.add("show");
+
+  clearTimeout(window.cartNotificationTimer);
+
+  window.cartNotificationTimer = setTimeout(() => {
+    notification.classList.remove("show");
+  }, 2500);
+
+}
 /* =====================================
 
    7. UPDATE BASKET
