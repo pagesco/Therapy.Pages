@@ -1392,7 +1392,7 @@ footer small {
 
       >
 
-        Clear Basket
+        Clear Cart
 
       </button>
 
@@ -1904,7 +1904,7 @@ function displayProducts() {
             class="btn btn-small"
             onclick="addToCart(${product.id})"
           >
-            Add to Basket
+            Add to Cart
           </button>
       
           <button
@@ -1967,7 +1967,7 @@ function addToCart(productId) {
 
   const notification = document.getElementById("cart-notification");
 
-  notification.textContent = `💗 ${product.name} added to your basket!`;
+  notification.textContent = `💗 Added to cart. Good Choice!`;
 
   notification.classList.add("show");
 
