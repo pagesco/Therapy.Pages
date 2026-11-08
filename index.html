@@ -1680,8 +1680,6 @@ const products = [
 
   // KIDS COLLECTION
 
-  {
-
       {
      id: 1,
      name: "Boys' Coloring Book",
@@ -1859,6 +1857,7 @@ function displayProducts() {
 
               ${product.price == null ? "" : `
         <div class="product-actions">
+        
           <button
             class="btn btn-small"
             onclick="addToCart(${product.id})"
@@ -1874,6 +1873,16 @@ function displayProducts() {
           </button>
         </div>
       `}
+
+       if (product.category === "Kids") {
+         kidsContainer.appendChild(card);
+       } else {
+         adultContainer.appendChild(card);
+       }
+   
+     });
+   
+   }
 
           <button
 
