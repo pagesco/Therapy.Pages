@@ -1702,15 +1702,16 @@ const products = [
 
     id: 1,
 
-    name: "Kids Coloring Book",
+    name: "Boys' Coloring Book",
 
     category: "Kids",
 
-    price: 1500,
+    price: 5000,
 
-    description: "Fun coloring pages for little artists.",
+    description: "Fun coloring pages for little explorers.",
 
-    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Kids+Book"
+    image: "boys book cover.jpeg"
+      alt="Custom Therapy Pages Coloring Books"
 
   },
 
@@ -1718,15 +1719,15 @@ const products = [
 
     id: 2,
 
-    name: "Animals Coloring Book",
+    name: "Girls' Coloring Book",
 
     category: "Kids",
 
-    price: 1500,
+    price: 5000,
 
     description: "Cute animals and creative adventures.",
 
-    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Animal+Book"
+    image: "girls book cover.jpeg"
 
   },
 
@@ -1734,15 +1735,15 @@ const products = [
 
     id: 3,
 
-    name: "Custom Kids Coloring Book",
+    name: "Workbook (Age Range: 2-5)",
 
     category: "Kids",
 
-    price: 2500,
+    price: 4500,
 
     description: "A personalized coloring book made just for you.",
 
-    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Custom+Kids"
+    image: "Workbook Cover.png"
 
   },
 
@@ -1756,11 +1757,11 @@ const products = [
 
     category: "Adults",
 
-    price: 2000,
+    price: 6,500,
 
     description: "Relax, unwind, and enjoy some creative time.",
 
-    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Adult+Book"
+    image: "adult binding.png"
 
   },
 
@@ -1768,15 +1769,15 @@ const products = [
 
     id: 5,
 
-    name: "Floral Coloring Book",
+    name: "Jamaican Edition",
 
     category: "Adults",
 
-    price: 2000,
+    price: ,
 
-    description: "Beautiful flowers and relaxing coloring pages.",
+    description: "Beautiful illustrations of childhood memories and more. COMING SOON",
 
-    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Floral+Book"
+    image: "comingsoon.jpg"
 
   },
 
@@ -1784,15 +1785,15 @@ const products = [
 
     id: 6,
 
-    name: "Self-Care Coloring Book",
+    name: "Schoolas Editon",
 
     category: "Adults",
 
-    price: 2500,
+    price: ,
 
-    description: "Take a moment for yourself and get creative.",
+    description: "Coloring pages of the schools in jamaica and more. COMING SOON",
 
-    image: "https://placehold.co/500x600/ffe1ef/b83270?text=Self+Care"
+    image: "comingsoon.jpg"
 
   }
 
@@ -1992,7 +1993,7 @@ function renderCart() {
 
       <div class="cart-empty">
 
-        Your basket is empty. 💗
+        Your cart is empty. 💗
 
         <br>
 
@@ -2178,7 +2179,7 @@ function sendWhatsApp(message) {
 
     !WHATSAPP_NUMBER ||
 
-    WHATSAPP_NUMBER.includes("X")
+    WHATSAPP_NUMBER.includes("+18767999430")
 
   ) {
 
@@ -2264,7 +2265,7 @@ function checkoutWhatsApp() {
 
     alert(
 
-      "Your basket is empty. Please add a coloring book first."
+      "Your cart is empty. Please add a coloring book first."
 
     );
 
