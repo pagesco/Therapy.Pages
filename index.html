@@ -10,8 +10,8 @@
 
 <title>Therapy Pages Coloring Book</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+   
 <link rel="icon" type="image/png" href="ICON.png">
 
 <style>
@@ -56,20 +56,54 @@ html {
 
   scroll-behavior: smooth;
 }
+/* ===== THERAPY PAGES SOFT PINK THEME ===== */
 
-  body {
-  font-family: "Playfair Display", serif;
-  background-image: url("background2.jpg");
-  background-position: center;
-  background-size: 100% auto;
+body {
+  background: linear-gradient(
+    135deg,
+    #fff0f6,
+    #ffe0ed,
+    #fff7fa,
+    #fce4ec
+  );
   background-attachment: fixed;
-  background-repeat: repeat-y;
-  color: var(--text);
-  line-height: 1.6;
+}
+
+/* Header */
+header {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* Main sections */
+.hero,
+.custom-section,
+.cart-box {
+  background: rgba(255, 240, 246, 0.88);
+}
+
+/* Product and form areas */
+.product-card,
+.cart-section,
+.custom-form {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* About section */
+.about-section {
+  background: rgba(255, 250, 252, 0.85);
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(
+    135deg,
+    #b83270,
+    #e75491
+  );
 }
 
 h1, h2, h3 {
-  font-family: "Dancing Script", cursive;
+  font-family: "Allura", cursive;
 }
    
 button, input, textarea, select {
