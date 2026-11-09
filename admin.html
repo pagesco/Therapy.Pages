@@ -819,6 +819,109 @@ async function loadDashboard() {
 }
 
   
+/* SEARCH FOR ORDERS */
+
+document.getElementById("searchOrderButton").addEventListener("click", async () => {
+  const searchInput = document.getElementById("orderSearch");
+  const results = document.getElementById("orderSearchResults");
+
+  const orderNumber = searchInput.value.trim();
+
+  results.replaceChildren();
+
+  if (!orderNumber) {
+    results.textContent = "Please enter an order number.";
+    return;
+  }
+
+  results.textContent = "Searching...";
+
+  try {
+    const { data: order, error } = await supabaseClient
+      .from("orders")
+      .select("*")
+      .eq("invoice_number", orderNumber)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    results.replaceChildren();
+
+    if (!order) {
+      results.textContent = "No order found with that number.";
+      return;
+    }
+
+    const heading = document.createElement("h3");
+    heading.textContent = "Order Found ♡";
+    results.appendChild(heading);
+
+    const details = [
+      ["Order Number", order.invoice_number],
+      ["Customer", order.customer_name],
+      ["Phone", order.customer_phone],
+      ["Email", order.customer_email],
+      ["Order Source", order.order_source],
+      ["Order Date", new Date(order.created_at).toLocaleString()],
+      ["Subtotal", money(order.subtotal)],
+      ["Delivery Fee", money(order.delivery_fee)],
+      ["Total", money(order.total)],
+      ["Order Status", order.order_status],
+      ["Payment Status", order.payment_status],
+      ["Payment Method", order.payment_method],
+      ["Notes", order.notes]
+    ];
+
+    details.forEach(([label, value]) => {
+      const paragraph = document.createElement("p");
+      paragraph.style.fontSize = "13px";
+
+      const strong = document.createElement("strong");
+      strong.textContent = label + ": ";
+
+      paragraph.append(strong, document.createTextNode(value ?? "—"));
+      results.appendChild(paragraph);
+    });
+
+    const itemHeading = document.createElement("h4");
+    itemHeading.textContent = "Books in this Order";
+    results.appendChild(itemHeading);
+
+    const { data: items, error: itemsError } = await supabaseClient
+      .from("order_items")
+      .select("product_name, unit_price, quantity, line_total")
+      .eq("order_id", order.id);
+
+    if (itemsError) throw itemsError;
+
+    if (!items.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "No order items found.";
+      results.appendChild(empty);
+    } else {
+      items.forEach(item => {
+        const paragraph = document.createElement("p");
+        paragraph.style.fontSize = "13px";
+        paragraph.textContent =
+          `${item.product_name} × ${item.quantity} — ${money(item.line_total)}`;
+        results.appendChild(paragraph);
+      });
+    }
+
+  } catch (error) {
+    results.textContent = "Search failed: " + error.message;
+  }
+});
+
+/* SEARCH WHEN ENTER IS PRESSED */
+document.getElementById("orderSearch").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("searchOrderButton").click();
+  }
+});
+
+  
 /* ORDER FORM FUNCTIONS */
 
 function formatOrderMoney(value) {
