@@ -578,6 +578,33 @@ footer {
     <div id="orderMessage" role="status" aria-live="polite"></div>
   </form>
 </div>
+    
+    <div class="panel">
+      <div class="panel-heading">
+        <h3>Find an Order ♡</h3>
+      </div>
+    
+      <div class="order-grid">
+        <div class="order-field">
+          <label for="orderSearch">Search by Order Number</label>
+          <input
+            id="orderSearch"
+            type="text"
+            placeholder="e.g. TP-20261108-00001"
+          >
+        </div>
+    
+        <div class="order-field">
+          <label>&nbsp;</label>
+          <button type="button" class="primary-btn" id="searchOrderButton">
+            Search Orders
+          </button>
+        </div>
+      </div>
+    
+      <div id="orderSearchResults" style="margin-top:18px;"></div>
+    </div>
+
 
     <div class="panel">
       <div class="panel-heading">
