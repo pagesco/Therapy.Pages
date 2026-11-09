@@ -1458,7 +1458,7 @@ footer h2 {
 
   <input
     type="text"
-    id="customerName"
+    id="checkoutcustomerName"
     placeholder="Enter your full name"
     required
     style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #e5cbd2; border-radius:8px; box-sizing:border-box;"
@@ -1470,7 +1470,7 @@ footer h2 {
 
   <input
     type="tel"
-    id="customerPhone"
+    id="checkoutcustomerPhone"
     placeholder="e.g. 8761234567"
     required
     style="width:100%; padding:12px; border:1px solid #e5cbd2; border-radius:8px; box-sizing:border-box;"
@@ -1560,7 +1560,7 @@ footer h2 {
 
     <div class="form-group">
 
-      <label for="customerName">
+      <label for="customcustomerName">
 
         Your Name
 
@@ -1570,7 +1570,7 @@ footer h2 {
 
         type="text"
 
-        id="customerName"
+        id="customcustomerName"
 
         placeholder="Enter your name"
 
@@ -1582,7 +1582,7 @@ footer h2 {
 
     <div class="form-group">
 
-      <label for="customerPhone">
+      <label for="customcustomerPhone">
 
         Your Contact Number
 
@@ -1592,7 +1592,7 @@ footer h2 {
 
         type="tel"
 
-        id="customerPhone"
+        id="customcustomerPhone"
 
         placeholder="Enter your phone number"
 
@@ -2464,11 +2464,11 @@ document
 
     const name =
 
-      document.getElementById("customerName").value;
+      document.getElementById("customcustomerName").value;
 
     const phone =
 
-      document.getElementById("customerPhone").value;
+      document.getElementById("customcustomerPhone").value;
 
     const occasion =
 
@@ -2480,7 +2480,7 @@ document
 
     const details =
 
-      document.getElementById("customDetails").value;
+      document.getElementById("customcustomDetails").value;
 
     const message =
 
@@ -2525,6 +2525,8 @@ displayProducts();
 renderCart();
 
 </script>
+
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 /* RESPONSIVE FALLING HEARTS */
