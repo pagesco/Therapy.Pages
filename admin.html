@@ -819,12 +819,10 @@ async function loadDashboard() {
 }
 
   
-/* SEARCH FOR ORDERS */
 
 document.getElementById("searchOrderButton").addEventListener("click", async () => {
   const searchInput = document.getElementById("orderSearch");
   const results = document.getElementById("orderSearchResults");
-
   const orderNumber = searchInput.value.trim();
 
   results.replaceChildren();
@@ -891,7 +889,7 @@ document.getElementById("searchOrderButton").addEventListener("click", async () 
 
     const { data: items, error: itemsError } = await supabaseClient
       .from("order_items")
-      .select("product_name, unit_price, quantity, line_total")
+      .select("product_id, product_name, unit_price, quantity, line_total")
       .eq("order_id", order.id);
 
     if (itemsError) throw itemsError;
@@ -910,104 +908,332 @@ document.getElementById("searchOrderButton").addEventListener("click", async () 
       });
     }
 
-    /* MANAGE ORDER STATUS */
+    /* EDIT ORDER BUTTON */
 
-    const updateHeading = document.createElement("h4");
-    updateHeading.textContent = "Manage This Order ♡";
-    updateHeading.style.marginTop = "25px";
-    results.appendChild(updateHeading);
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "primary-btn";
+    editButton.style.marginTop = "20px";
+    editButton.textContent = "✎ Edit Order";
+    results.appendChild(editButton);
 
-    const orderStatusLabel = document.createElement("label");
-    orderStatusLabel.textContent = "Order Status";
-    orderStatusLabel.style.display = "block";
-    results.appendChild(orderStatusLabel);
+    /* EDIT FORM */
 
-    const orderStatusSelect = document.createElement("select");
-    orderStatusSelect.className = "field";
-    orderStatusSelect.style.marginTop = "7px";
+    const editSection = document.createElement("div");
+    editSection.style.marginTop = "20px";
+    editSection.style.padding = "20px";
+    editSection.style.background = "#fff8f8";
+    editSection.style.borderRadius = "12px";
+    editSection.style.border = "1px solid #eadada";
+    editSection.hidden = true;
 
-    [
-      ["pending", "Pending"],
-      ["confirmed", "Confirmed"],
-      ["processing", "Processing"],
-      ["ready", "Ready"],
-      ["delivered", "Delivered"],
-      ["cancelled", "Cancelled"]
-    ].forEach(([value, label]) => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = label;
-      orderStatusSelect.appendChild(option);
+    results.appendChild(editSection);
+
+    const editHeading = document.createElement("h4");
+    editHeading.textContent = "Edit Order Details ♡";
+    editSection.appendChild(editHeading);
+
+    function createField(labelText, element) {
+      const wrapper = document.createElement("div");
+      wrapper.style.marginBottom = "14px";
+
+      const label = document.createElement("label");
+      label.textContent = labelText;
+      label.style.display = "block";
+      label.style.marginBottom = "6px";
+
+      element.className = "field";
+      element.style.width = "100%";
+      element.style.boxSizing = "border-box";
+
+      wrapper.append(label, element);
+      editSection.appendChild(wrapper);
+
+      return element;
+    }
+
+    function createInput(value, type = "text") {
+      const element = document.createElement("input");
+      element.type = type;
+      element.value = value ?? "";
+      return element;
+    }
+
+    function createSelect(options, selectedValue) {
+      const element = document.createElement("select");
+
+      options.forEach(([value, label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        element.appendChild(option);
+      });
+
+      element.value = selectedValue ?? "";
+      return element;
+    }
+
+    /* CUSTOMER INFORMATION */
+
+    const customerNameInput = createField(
+      "Customer Name",
+      createInput(order.customer_name)
+    );
+
+    const customerPhoneInput = createField(
+      "Phone Number",
+      createInput(order.customer_phone)
+    );
+
+    const customerEmailInput = createField(
+      "Email Address",
+      createInput(order.customer_email, "email")
+    );
+
+    /* ORDER INFORMATION */
+
+    const sourceOptions = [
+      ["website", "Website"],
+      ["manual", "Manual"],
+      ["whatsapp", "WhatsApp"],
+      ["instagram", "Instagram"],
+      ["in_person", "In Person"]
+    ];
+
+    if (order.order_source && !sourceOptions.some(option => option[0] === order.order_source)) {
+      sourceOptions.push([order.order_source, order.order_source]);
+    }
+
+    const sourceSelect = createField(
+      "Order Source",
+      createSelect(sourceOptions, order.order_source)
+    );
+
+    const orderStatusSelect = createField(
+      "Order Status",
+      createSelect([
+        ["pending", "Pending"],
+        ["confirmed", "Confirmed"],
+        ["processing", "Processing"],
+        ["ready", "Ready"],
+        ["delivered", "Delivered"],
+        ["cancelled", "Cancelled"]
+      ], order.order_status)
+    );
+
+    const paymentStatusSelect = createField(
+      "Payment Status",
+      createSelect([
+        ["pending", "Pending / Unpaid"],
+        ["partial", "Partially Paid"],
+        ["paid", "Paid"],
+        ["refunded", "Refunded"]
+      ], order.payment_status)
+    );
+
+    const paymentMethodInput = createField(
+      "Payment Method",
+      createInput(order.payment_method)
+    );
+
+    const deliveryFeeInput = createField(
+      "Delivery Fee (JMD)",
+      createInput(order.delivery_fee ?? 0, "number")
+    );
+    deliveryFeeInput.min = "0";
+    deliveryFeeInput.step = "0.01";
+
+    const notesInput = document.createElement("textarea");
+    notesInput.value = order.notes ?? "";
+    notesInput.rows = 3;
+
+    const notesField = createField("Order Notes", notesInput);
+
+    /* EDIT BOOKS AND QUANTITIES */
+
+    const booksHeading = document.createElement("h4");
+    booksHeading.textContent = "Edit Books in This Order";
+    editSection.appendChild(booksHeading);
+
+    const booksContainer = document.createElement("div");
+    editSection.appendChild(booksContainer);
+
+    function createBookRow(existingItem = null) {
+      const row = document.createElement("div");
+      row.style.display = "flex";
+      row.style.flexWrap = "wrap";
+      row.style.gap = "8px";
+      row.style.marginBottom = "12px";
+      row.style.alignItems = "center";
+
+      const productSelect = document.createElement("select");
+      productSelect.className = "field";
+      productSelect.style.flex = "2";
+      productSelect.style.minWidth = "180px";
+
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Choose a book...";
+      productSelect.appendChild(placeholder);
+
+      (availableProducts || []).forEach(product => {
+        const option = document.createElement("option");
+        option.value = product.id;
+        option.textContent =
+          `${product.name} — ${money(product.price_jmd)}`;
+        productSelect.appendChild(option);
+      });
+
+      if (existingItem && existingItem.product_id) {
+        productSelect.value = existingItem.product_id;
+      }
+
+      const quantityInput = document.createElement("input");
+      quantityInput.type = "number";
+      quantityInput.min = "1";
+      quantityInput.step = "1";
+      quantityInput.value = existingItem ? existingItem.quantity : 1;
+      quantityInput.className = "field";
+      quantityInput.style.width = "85px";
+
+      const removeButton = document.createElement("button");
+      removeButton.type = "button";
+      removeButton.textContent = "Remove";
+      removeButton.className = "secondary-btn";
+
+      removeButton.addEventListener("click", () => {
+        row.remove();
+      });
+
+      row.append(productSelect, quantityInput, removeButton);
+      booksContainer.appendChild(row);
+
+      return row;
+    }
+
+    if (items && items.length) {
+      items.forEach(item => createBookRow(item));
+    } else {
+      createBookRow();
+    }
+
+    const addBookButton = document.createElement("button");
+    addBookButton.type = "button";
+    addBookButton.className = "secondary-btn";
+    addBookButton.style.marginBottom = "18px";
+    addBookButton.textContent = "+ Add Another Book";
+
+    addBookButton.addEventListener("click", () => {
+      createBookRow();
     });
 
-    orderStatusSelect.value = order.order_status;
-    results.appendChild(orderStatusSelect);
+    editSection.appendChild(addBookButton);
 
-    const paymentLabel = document.createElement("label");
-    paymentLabel.textContent = "Payment Status";
-    paymentLabel.style.display = "block";
-    paymentLabel.style.marginTop = "12px";
-    results.appendChild(paymentLabel);
+    /* SAVE EDITED ORDER */
 
-    const paymentStatusSelect = document.createElement("select");
-    paymentStatusSelect.className = "field";
-    paymentStatusSelect.style.marginTop = "7px";
+    const saveButton = document.createElement("button");
+    saveButton.type = "button";
+    saveButton.className = "primary-btn";
+    saveButton.style.display = "block";
+    saveButton.style.marginTop = "15px";
+    saveButton.textContent = "Save All Changes ♡";
 
-    [
-      ["pending", "Pending / Unpaid"],
-      ["partial", "Partially Paid"],
-      ["paid", "Paid"],
-      ["refunded", "Refunded"]
-    ].forEach(([value, label]) => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = label;
-      paymentStatusSelect.appendChild(option);
+    editSection.appendChild(saveButton);
+
+    const message = document.createElement("p");
+    message.style.fontSize = "13px";
+    editSection.appendChild(message);
+
+    editButton.addEventListener("click", () => {
+      editSection.hidden = !editSection.hidden;
+      editButton.textContent = editSection.hidden
+        ? "✎ Edit Order"
+        : "Close Editor";
     });
 
-    paymentStatusSelect.value = order.payment_status;
-    results.appendChild(paymentStatusSelect);
+    saveButton.addEventListener("click", async () => {
+      const bookRows = [...booksContainer.children];
 
-    const updateButton = document.createElement("button");
-    updateButton.type = "button";
-    updateButton.className = "primary-btn";
-    updateButton.style.marginTop = "15px";
-    updateButton.style.maxWidth = "260px";
-    updateButton.textContent = "Save Changes";
-    results.appendChild(updateButton);
+      if (!customerNameInput.value.trim()) {
+        message.style.color = "#a34c62";
+        message.textContent = "Please enter the customer's name.";
+        return;
+      }
 
-    const updateMessage = document.createElement("p");
-    updateMessage.style.fontSize = "13px";
-    results.appendChild(updateMessage);
+      if (!bookRows.length) {
+        message.style.color = "#a34c62";
+        message.textContent = "Please add at least one book.";
+        return;
+      }
 
-    updateButton.addEventListener("click", async () => {
-      updateButton.disabled = true;
-      updateButton.textContent = "Saving...";
+      const editedItems = [];
+
+      for (const row of bookRows) {
+        const productSelect = row.querySelector("select");
+        const quantityInput = row.querySelector("input");
+
+        const productId = productSelect.value;
+        const quantity = Number(quantityInput.value);
+
+        if (!productId || !Number.isInteger(quantity) || quantity <= 0) {
+          message.style.color = "#a34c62";
+          message.textContent =
+            "Please choose a book and enter a valid quantity for every row.";
+          return;
+        }
+
+        editedItems.push({
+          product_id: productId,
+          quantity: quantity
+        });
+      }
+
+      const deliveryFee = Number(deliveryFeeInput.value);
+
+      if (!Number.isFinite(deliveryFee) || deliveryFee < 0) {
+        message.style.color = "#a34c62";
+        message.textContent = "Please enter a valid delivery fee.";
+        return;
+      }
+
+      saveButton.disabled = true;
+      saveButton.textContent = "Saving...";
+      message.textContent = "";
 
       try {
-        const { error: updateError } = await supabaseClient
-          .from("orders")
-          .update({
-            order_status: orderStatusSelect.value,
-            payment_status: paymentStatusSelect.value
-          })
-          .eq("id", order.id);
+        const { error: updateError } = await supabaseClient.rpc(
+          "update_manual_order",
+          {
+            p_order_id: order.id,
+            p_customer_name: customerNameInput.value.trim(),
+            p_customer_phone: customerPhoneInput.value.trim(),
+            p_customer_email: customerEmailInput.value.trim(),
+            p_order_source: sourceSelect.value,
+            p_order_status: orderStatusSelect.value,
+            p_payment_status: paymentStatusSelect.value,
+            p_payment_method: paymentMethodInput.value.trim(),
+            p_delivery_fee: deliveryFee,
+            p_notes: notesInput.value.trim(),
+            p_items: editedItems
+          }
+        );
 
         if (updateError) throw updateError;
 
-        updateMessage.style.color = "#668568";
-        updateMessage.textContent = "Order updated successfully! ♡";
+        message.style.color = "#668568";
+        message.textContent = "Order updated successfully! ♡";
 
         await loadDashboard();
 
+        document.getElementById("searchOrderButton").click();
+
       } catch (error) {
-        updateMessage.style.color = "#a34c62";
-        updateMessage.textContent =
-          "Could not update: " + error.message;
+        message.style.color = "#a34c62";
+        message.textContent = "Could not update: " + error.message;
 
       } finally {
-        updateButton.disabled = false;
-        updateButton.textContent = "Save Changes";
+        saveButton.disabled = false;
+        saveButton.textContent = "Save All Changes ♡";
       }
     });
 
