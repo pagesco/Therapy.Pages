@@ -2493,18 +2493,50 @@ renderCart();
 </script>
 
 <script>
+/* RESPONSIVE FALLING HEARTS */
+
 function createFallingHeart() {
+
     const heart = document.createElement("div");
 
     heart.className = "falling-heart";
     heart.innerHTML = "♥";
 
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (12 + Math.random() * 18) + "px";
-    heart.style.animationDuration = (5 + Math.random() * 6) + "s";
+    const isMobile = window.matchMedia(
+        "(max-width: 600px)"
+    ).matches;
 
-    const shades = ["#e75491", "#ffb6d5", "#b83270", "#f48fb1"];
-    heart.style.color = shades[Math.floor(Math.random() * shades.length)];
+    heart.style.left = Math.random() * 100 + "vw";
+
+    heart.style.fontSize = isMobile
+        ? (9 + Math.random() * 8) + "px"
+        : (12 + Math.random() * 18) + "px";
+
+    heart.style.animationDuration =
+        (5 + Math.random() * 6) + "s";
+
+    const desktopShades = [
+        "#e75491",
+        "#ffb6d5",
+        "#b83270",
+        "#f48fb1"
+    ];
+
+    const mobileShades = [
+        "#fbd9e8",
+        "#f8cfe0",
+        "#fce3ed",
+        "#f6d2e2"
+    ];
+
+    const shades = isMobile
+        ? mobileShades
+        : desktopShades;
+
+    heart.style.color =
+        shades[Math.floor(Math.random() * shades.length)];
+
+    heart.style.opacity = isMobile ? "0.35" : "0.7";
 
     document.body.appendChild(heart);
 
@@ -2513,9 +2545,13 @@ function createFallingHeart() {
     }, 12000);
 }
 
-setInterval(createFallingHeart, 500);
-</script>
+const heartInterval = window.matchMedia(
+    "(max-width: 600px)"
+).matches ? 1000 : 500;
 
+setInterval(createFallingHeart, heartInterval);
+
+</script>
 </body>
 
 </html>
