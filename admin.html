@@ -131,7 +131,7 @@ button {
   box-shadow: 0 0 0 3px #f9e9ef;
 }
 
-.order- {
+.order-items{
   margin-top: 22px;
 }
 
@@ -883,18 +883,20 @@ document.getElementById("searchOrderButton").addEventListener("click", async () 
       results.appendChild(paragraph);
     });
 
+    /* SHOW ORDER ITEMS */
+
     const itemHeading = document.createElement("h4");
     itemHeading.textContent = "Books in this Order";
     results.appendChild(itemHeading);
 
-    const { data: , error: Error } = await supabaseClient
-      .from("order_")
+    const { data: items, error: itemsError } = await supabaseClient
+      .from("order_items")
       .select("product_name, unit_price, quantity, line_total")
       .eq("order_id", order.id);
 
-    if (Error) throw Error;
+    if (itemsError) throw itemsError;
 
-    if (!items.length) {
+    if (!items || !items.length) {
       const empty = document.createElement("p");
       empty.textContent = "No order items found.";
       results.appendChild(empty);
@@ -908,121 +910,121 @@ document.getElementById("searchOrderButton").addEventListener("click", async () 
       });
     }
 
+    /* MANAGE ORDER STATUS */
+
+    const updateHeading = document.createElement("h4");
+    updateHeading.textContent = "Manage This Order ♡";
+    updateHeading.style.marginTop = "25px";
+    results.appendChild(updateHeading);
+
+    const orderStatusLabel = document.createElement("label");
+    orderStatusLabel.textContent = "Order Status";
+    orderStatusLabel.style.display = "block";
+    results.appendChild(orderStatusLabel);
+
+    const orderStatusSelect = document.createElement("select");
+    orderStatusSelect.className = "field";
+    orderStatusSelect.style.marginTop = "7px";
+
+    [
+      ["pending", "Pending"],
+      ["confirmed", "Confirmed"],
+      ["processing", "Processing"],
+      ["ready", "Ready"],
+      ["delivered", "Delivered"],
+      ["cancelled", "Cancelled"]
+    ].forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      orderStatusSelect.appendChild(option);
+    });
+
+    orderStatusSelect.value = order.order_status;
+    results.appendChild(orderStatusSelect);
+
+    const paymentLabel = document.createElement("label");
+    paymentLabel.textContent = "Payment Status";
+    paymentLabel.style.display = "block";
+    paymentLabel.style.marginTop = "12px";
+    results.appendChild(paymentLabel);
+
+    const paymentStatusSelect = document.createElement("select");
+    paymentStatusSelect.className = "field";
+    paymentStatusSelect.style.marginTop = "7px";
+
+    [
+      ["pending", "Pending / Unpaid"],
+      ["partial", "Partially Paid"],
+      ["paid", "Paid"],
+      ["refunded", "Refunded"]
+    ].forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      paymentStatusSelect.appendChild(option);
+    });
+
+    paymentStatusSelect.value = order.payment_status;
+    results.appendChild(paymentStatusSelect);
+
+    const updateButton = document.createElement("button");
+    updateButton.type = "button";
+    updateButton.className = "primary-btn";
+    updateButton.style.marginTop = "15px";
+    updateButton.style.maxWidth = "260px";
+    updateButton.textContent = "Save Changes";
+    results.appendChild(updateButton);
+
+    const updateMessage = document.createElement("p");
+    updateMessage.style.fontSize = "13px";
+    results.appendChild(updateMessage);
+
+    updateButton.addEventListener("click", async () => {
+      updateButton.disabled = true;
+      updateButton.textContent = "Saving...";
+
+      try {
+        const { error: updateError } = await supabaseClient
+          .from("orders")
+          .update({
+            order_status: orderStatusSelect.value,
+            payment_status: paymentStatusSelect.value
+          })
+          .eq("id", order.id);
+
+        if (updateError) throw updateError;
+
+        updateMessage.style.color = "#668568";
+        updateMessage.textContent = "Order updated successfully! ♡";
+
+        await loadDashboard();
+
+      } catch (error) {
+        updateMessage.style.color = "#a34c62";
+        updateMessage.textContent =
+          "Could not update: " + error.message;
+
+      } finally {
+        updateButton.disabled = false;
+        updateButton.textContent = "Save Changes";
+      }
+    });
+
   } catch (error) {
     results.textContent = "Search failed: " + error.message;
   }
 });
 
-  
-/* UPDATE ORDER AND PAYMENT STATUS */
-
-const updateHeading = document.createElement("h4");
-updateHeading.textContent = "Manage This Order ♡";
-updateHeading.style.marginTop = "25px";
-results.appendChild(updateHeading);
-
-const orderStatusLabel = document.createElement("label");
-orderStatusLabel.textContent = "Order Status";
-orderStatusLabel.style.display = "block";
-orderStatusLabel.style.marginTop = "12px";
-results.appendChild(orderStatusLabel);
-
-const orderStatusSelect = document.createElement("select");
-orderStatusSelect.className = "field";
-orderStatusSelect.style.marginTop = "7px";
-
-[
-  ["pending", "Pending"],
-  ["confirmed", "Confirmed"],
-  ["processing", "Processing"],
-  ["ready", "Ready"],
-  ["delivered", "Delivered"],
-  ["cancelled", "Cancelled"]
-].forEach(([value, label]) => {
-  const option = document.createElement("option");
-  option.value = value;
-  option.textContent = label;
-  orderStatusSelect.appendChild(option);
-});
-
-orderStatusSelect.value = order.order_status;
-results.appendChild(orderStatusSelect);
-
-const paymentLabel = document.createElement("label");
-paymentLabel.textContent = "Payment Status";
-paymentLabel.style.display = "block";
-paymentLabel.style.marginTop = "12px";
-results.appendChild(paymentLabel);
-
-const paymentStatusSelect = document.createElement("select");
-paymentStatusSelect.className = "field";
-paymentStatusSelect.style.marginTop = "7px";
-
-[
-  ["pending", "Pending / Unpaid"],
-  ["partial", "Partially Paid"],
-  ["paid", "Paid"],
-  ["refunded", "Refunded"]
-].forEach(([value, label]) => {
-  const option = document.createElement("option");
-  option.value = value;
-  option.textContent = label;
-  paymentStatusSelect.appendChild(option);
-});
-
-paymentStatusSelect.value = order.payment_status;
-results.appendChild(paymentStatusSelect);
-
-const updateButton = document.createElement("button");
-updateButton.type = "button";
-updateButton.className = "primary-btn";
-updateButton.style.marginTop = "15px";
-updateButton.style.maxWidth = "260px";
-updateButton.textContent = "Save Changes";
-results.appendChild(updateButton);
-
-const updateMessage = document.createElement("p");
-updateMessage.style.fontSize = "13px";
-results.appendChild(updateMessage);
-
-updateButton.addEventListener("click", async () => {
-  updateButton.disabled = true;
-  updateButton.textContent = "Saving...";
-
-  try {
-    const { error: updateError } = await supabaseClient
-      .from("orders")
-      .update({
-        order_status: orderStatusSelect.value,
-        payment_status: paymentStatusSelect.value
-      })
-      .eq("id", order.id);
-
-    if (updateError) throw updateError;
-
-    updateMessage.style.color = "#668568";
-    updateMessage.textContent = "Order updated successfully! ♡";
-
-    await loadDashboard();
-
-  } catch (error) {
-    updateMessage.style.color = "#a34c62";
-    updateMessage.textContent = "Could not update: " + error.message;
-
-  } finally {
-    updateButton.disabled = false;
-    updateButton.textContent = "Save Changes";
-  }
-});
-
-
 /* SEARCH WHEN ENTER IS PRESSED */
+
 document.getElementById("orderSearch").addEventListener("keydown", event => {
   if (event.key === "Enter") {
     event.preventDefault();
     document.getElementById("searchOrderButton").click();
   }
 });
+
 
   
 /* ORDER FORM FUNCTIONS */
