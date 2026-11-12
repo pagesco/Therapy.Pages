@@ -787,8 +787,21 @@ async function loadDashboard() {
         statusCell.appendChild(status);
 
         addCell(row, order.payment_status);
-      });
-    }
+
+        const actionsCell = addCell(row, "");
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "delete-btn";
+        
+        deleteButton.addEventListener("click", () => {
+          deleteOrder(order.id, order.invoice_number);
+        });
+        
+        actionsCell.appendChild(deleteButton);
+              });
+            }
 
     const productsTable = document.getElementById("productsTable");
     productsTable.replaceChildren();
