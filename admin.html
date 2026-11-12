@@ -659,51 +659,51 @@ footer {
   <footer>Made with love ♡ Therapy Pages</footer>
 </section>
 
-<script>
-/* ADD YOUR SUPABASE DETAILS HERE */
-const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
-
-/* CONNECT TO SUPABASE */
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-
-const loginScreen = document.getElementById("loginScreen");
-const dashboard = document.getElementById("dashboard");
-const loginMessage = document.getElementById("loginMessage");
-const dashboardMessage = document.getElementById("dashboardMessage");
-let availableProducts = [];
-
-function showDashboard() {
-  loginScreen.style.display = "none";
-  dashboard.style.display = "block";
-}
-
-function showLogin() {
-  dashboard.style.display = "none";
-  loginScreen.style.display = "flex";
-}
-
-function showError(element, message) {
-  element.textContent = message;
-}
-
-function addCell(row, value) {
-  const cell = document.createElement("td");
-  cell.textContent = value ?? "—";
-  row.appendChild(cell);
-  return cell;
-}
-
-function money(value) {
-  return new Intl.NumberFormat("en-JM", {
-    style: "currency",
-    currency: "JMD",
-    maximumFractionDigits: 2
-  }).format(Number(value || 0));
-}
+          <script>
+          /* ADD YOUR SUPABASE DETAILS HERE */
+          const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+          const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+          
+          /* CONNECT TO SUPABASE */
+          const supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+          );
+          
+          const loginScreen = document.getElementById("loginScreen");
+          const dashboard = document.getElementById("dashboard");
+          const loginMessage = document.getElementById("loginMessage");
+          const dashboardMessage = document.getElementById("dashboardMessage");
+          let availableProducts = [];
+          
+          function showDashboard() {
+            loginScreen.style.display = "none";
+            dashboard.style.display = "block";
+          }
+          
+          function showLogin() {
+            dashboard.style.display = "none";
+            loginScreen.style.display = "flex";
+          }
+          
+          function showError(element, message) {
+            element.textContent = message;
+          }
+          
+          function addCell(row, value) {
+            const cell = document.createElement("td");
+            cell.textContent = value ?? "—";
+            row.appendChild(cell);
+            return cell;
+          }
+          
+          function money(value) {
+            return new Intl.NumberFormat("en-JM", {
+              style: "currency",
+              currency: "JMD",
+              maximumFractionDigits: 2
+            }).format(Number(value || 0));
+          }
 
         /* ADMIN LOGIN */
         document.getElementById("loginForm").addEventListener("submit", async (event) => {
@@ -955,6 +955,9 @@ async function loadDashboard() {
             
             paymentCell.appendChild(paymentSelect);
 
+        });
+      }
+
 
                     // DELETE ORDER BUTTON
             const actionsCell = addCell(row, "");
@@ -970,35 +973,35 @@ async function loadDashboard() {
             
             actionsCell.appendChild(deleteButton);
 
-    const productsTable = document.getElementById("productsTable");
-    productsTable.replaceChildren();
-
-    if (!products.length) {
-      const row = productsTable.insertRow();
-      const cell = row.insertCell();
-      cell.colSpan = 4;
-      cell.className = "empty";
-      cell.textContent = "No products found.";
-    } else {
-      products.forEach(product => {
-        const row = productsTable.insertRow();
-        addCell(row, product.name);
-        addCell(row, money(product.price_jmd));
-        addCell(row, product.track_inventory === false
-          ? "Not tracked"
-          : product.stock_quantity);
-
-        addCell(row, product.is_active ? "Active" : "Inactive");
-      });
-    }
-
-    dashboardMessage.textContent = "";
-
-  } catch (error) {
-    showError(dashboardMessage,
-      "Could not load dashboard: " + (error.message || "Please try again."));
-  }
-}
+          const productsTable = document.getElementById("productsTable");
+          productsTable.replaceChildren();
+      
+          if (!products.length) {
+            const row = productsTable.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 4;
+            cell.className = "empty";
+            cell.textContent = "No products found.";
+          } else {
+            products.forEach(product => {
+              const row = productsTable.insertRow();
+              addCell(row, product.name);
+              addCell(row, money(product.price_jmd));
+              addCell(row, product.track_inventory === false
+                ? "Not tracked"
+                : product.stock_quantity);
+      
+              addCell(row, product.is_active ? "Active" : "Inactive");
+            });
+          }
+      
+          dashboardMessage.textContent = "";
+      
+        } catch (error) {
+          showError(dashboardMessage,
+            "Could not load dashboard: " + (error.message || "Please try again."));
+        }
+      }
 
   
 
