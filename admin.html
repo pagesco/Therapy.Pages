@@ -770,7 +770,7 @@ async function loadDashboard() {
     if (!orders.length) {
       const row = ordersTable.insertRow();
       const cell = row.insertCell();
-      cell.colSpan = 5;
+      cell.colSpan = 6;
       cell.className = "empty";
       cell.textContent = "No orders have been received yet.";
     } else {
