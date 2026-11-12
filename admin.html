@@ -705,73 +705,105 @@ function money(value) {
   }).format(Number(value || 0));
 }
 
-/* ADMIN LOGIN */
-document.getElementById("loginForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
+        /* ADMIN LOGIN */
+        document.getElementById("loginForm").addEventListener("submit", async (event) => {
+          event.preventDefault();
+        
+          const button = document.getElementById("loginButton");
+          button.disabled = true;
+          button.textContent = "Signing in...";
+          loginMessage.textContent = "";
+        
+          try {
+            const { error } = await supabaseClient.auth.signInWithPassword({
+              email: document.getElementById("email").value.trim(),
+              password: document.getElementById("password").value
+            });
+        
+            if (error) throw error;
+        
+            showDashboard();
+            await loadDashboard();
+        
+          } catch (error) {
+            showError(loginMessage, error.message || "Unable to sign in.");
+          } finally {
+            button.disabled = false;
+            button.textContent = "Sign In";
+          }
+        });
+        
+          /* DELETE AN ORDER */
+        async function deleteOrder(orderId, invoiceNumber) {
+        
+          const confirmed = confirm(
+            "Are you sure you want to permanently delete order " +
+            invoiceNumber +
+            "?\n\nThis action cannot be undone."
+          );
+        
+          if (!confirmed) return;
+        
+          dashboardMessage.textContent = "Deleting order...";
+        
+          try {
+        
+            const { data, error } = await supabaseClient
+              .from("orders")
+              .delete()
+              .eq("id", orderId)
+              .select("id")
+              .single();
+        
+            if (error) throw error;
+        
+            await loadDashboard();
+        
+            dashboardMessage.style.color = "#668568";
+            dashboardMessage.textContent =
+              "Order " + invoiceNumber + " was deleted successfully.";
+        
+          } catch (error) {
+        
+            dashboardMessage.style.color = "#a34c62";
+            dashboardMessage.textContent =
+              "Could not delete order: " +
+              (error.message || "Please try again.");
+        
+          }
+        }
 
-  const button = document.getElementById("loginButton");
-  button.disabled = true;
-  button.textContent = "Signing in...";
-  loginMessage.textContent = "";
-
-  try {
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value
-    });
-
-    if (error) throw error;
-
-    showDashboard();
-    await loadDashboard();
-
-  } catch (error) {
-    showError(loginMessage, error.message || "Unable to sign in.");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Sign In";
-  }
-});
-
-  /* DELETE AN ORDER */
-async function deleteOrder(orderId, invoiceNumber) {
-
-  const confirmed = confirm(
-    "Are you sure you want to permanently delete order " +
-    invoiceNumber +
-    "?\n\nThis action cannot be undone."
-  );
-
-  if (!confirmed) return;
-
-  dashboardMessage.textContent = "Deleting order...";
-
-  try {
-
-    const { data, error } = await supabaseClient
-      .from("orders")
-      .delete()
-      .eq("id", orderId)
-      .select("id")
-      .single();
-
-    if (error) throw error;
-
-    await loadDashboard();
-
-    dashboardMessage.style.color = "#668568";
-    dashboardMessage.textContent =
-      "Order " + invoiceNumber + " was deleted successfully.";
-
-  } catch (error) {
-
-    dashboardMessage.style.color = "#a34c62";
-    dashboardMessage.textContent =
-      "Could not delete order: " +
-      (error.message || "Please try again.");
-
-  }
-}
+        /* UPDATE ORDER STATUS */
+      async function updateOrderStatus(orderId, newStatus, invoiceNumber, selectElement) {
+      
+        selectElement.disabled = true;
+        dashboardMessage.textContent = "Updating order status...";
+      
+        try {
+      
+          const { error } = await supabaseClient
+            .from("orders")
+            .update({ order_status: newStatus })
+            .eq("id", orderId);
+      
+          if (error) throw error;
+      
+          dashboardMessage.style.color = "#668568";
+          dashboardMessage.textContent =
+            "Order " + invoiceNumber + " updated successfully.";
+      
+          await loadDashboard();
+      
+        } catch (error) {
+      
+          dashboardMessage.style.color = "#a34c62";
+          dashboardMessage.textContent =
+            "Could not update order: " +
+            (error.message || "Please try again.");
+      
+          selectElement.disabled = false;
+        }
+      }
 
 /* LOAD BUSINESS INFORMATION */
 async function loadDashboard() {
