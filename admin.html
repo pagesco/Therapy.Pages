@@ -885,22 +885,39 @@ async function loadDashboard() {
           });
           
           statusCell.appendChild(statusSelect);
-        addCell(row, order.payment_status);
+          addCell(row, order.payment_status);
+  
+          const paymentCell = addCell(row, "");
 
-        const actionsCell = addCell(row, "");
-
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
-        deleteButton.className = "delete-btn";
-        
-        deleteButton.addEventListener("click", () => {
-          deleteOrder(order.id, order.invoice_number);
-        });
-        
-        actionsCell.appendChild(deleteButton);
-              });
-            }
+            const paymentSelect = document.createElement("select");
+            paymentSelect.className = "field";
+            
+            const paymentOptions = [
+              ["pending", "Pending / Unpaid"],
+              ["partial", "Partially Paid"],
+              ["paid", "Paid"],
+              ["refunded", "Refunded"]
+            ];
+            
+            paymentOptions.forEach(([value, label]) => {
+              const option = document.createElement("option");
+              option.value = value;
+              option.textContent = label;
+              paymentSelect.appendChild(option);
+            });
+            
+            paymentSelect.value = order.payment_status || "pending";
+            
+            paymentSelect.addEventListener("change", () => {
+              updatePaymentStatus(
+                order.id,
+                paymentSelect.value,
+                order.invoice_number,
+                paymentSelect
+              );
+            });
+            
+            paymentCell.appendChild(paymentSelect);
 
     const productsTable = document.getElementById("productsTable");
     productsTable.replaceChildren();
