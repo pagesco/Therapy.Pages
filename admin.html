@@ -805,6 +805,44 @@ function money(value) {
         }
       }
 
+        /* UPDATE PAYMENT STATUS */
+
+          async function updatePaymentStatus(orderId, newStatus, invoiceNumber, selectElement) {
+          
+            selectElement.disabled = true;
+          
+            dashboardMessage.textContent = "Updating payment status...";
+          
+            try {
+          
+              const { error } = await supabaseClient
+                .from("orders")
+                .update({ payment_status: newStatus })
+                .eq("id", orderId);
+          
+              if (error) throw error;
+          
+              await loadDashboard();
+          
+              dashboardMessage.style.color = "#668568";
+          
+              dashboardMessage.textContent =
+                "Payment status for order " + invoiceNumber + " updated successfully.";
+          
+            } catch (error) {
+          
+              dashboardMessage.style.color = "#a34c62";
+          
+              dashboardMessage.textContent =
+                "Could not update payment status: " +
+                (error.message || "Please try again.");
+          
+              selectElement.disabled = false;
+          
+            }
+          
+          }
+
 /* LOAD BUSINESS INFORMATION */
 async function loadDashboard() {
   dashboardMessage.textContent = "Loading your business information...";
