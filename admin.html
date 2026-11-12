@@ -923,8 +923,6 @@ async function loadDashboard() {
           });
           
           statusCell.appendChild(statusSelect);
-          addCell(row, order.payment_status);
-  
           const paymentCell = addCell(row, "");
 
             const paymentSelect = document.createElement("select");
@@ -956,6 +954,21 @@ async function loadDashboard() {
             });
             
             paymentCell.appendChild(paymentSelect);
+
+
+                    // DELETE ORDER BUTTON
+            const actionsCell = addCell(row, "");
+            
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "secondary-btn";
+            deleteButton.textContent = "Delete";
+            
+            deleteButton.addEventListener("click", () => {
+              deleteOrder(order.id, order.invoice_number);
+            });
+            
+            actionsCell.appendChild(deleteButton);
 
     const productsTable = document.getElementById("productsTable");
     productsTable.replaceChildren();
