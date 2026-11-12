@@ -819,13 +819,40 @@ async function loadDashboard() {
         addCell(row, order.invoice_number || "Not assigned");
         addCell(row, order.customer_name);
         addCell(row, money(order.total));
-
+          
         const statusCell = addCell(row, "");
-        const status = document.createElement("span");
-        status.className = "status";
-        status.textContent = order.order_status;
-        statusCell.appendChild(status);
-
+          
+          const statusSelect = document.createElement("select");
+          statusSelect.className = "field";
+          
+          const statusOptions = [
+            ["pending", "Pending"],
+            ["confirmed", "Confirmed"],
+            ["processing", "Processing"],
+            ["ready", "Ready"],
+            ["delivered", "Delivered"],
+            ["cancelled", "Cancelled"]
+          ];
+          
+          statusOptions.forEach(([value, label]) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            statusSelect.appendChild(option);
+          });
+          
+          statusSelect.value = order.order_status || "pending";
+          
+          statusSelect.addEventListener("change", () => {
+            updateOrderStatus(
+              order.id,
+              statusSelect.value,
+              order.invoice_number,
+              statusSelect
+            );
+          });
+          
+          statusCell.appendChild(statusSelect);
         addCell(row, order.payment_status);
 
         const actionsCell = addCell(row, "");
