@@ -2041,6 +2041,41 @@ const products = [
           reviewsList.appendChild(card);
         });
       }
+
+
+         async function submitReview() {
+        const name = document.getElementById("reviewName").value.trim();
+        const rating = Number(document.getElementById("reviewRating").value);
+        const review = document.getElementById("reviewText").value.trim();
+        const message = document.getElementById("reviewMessage");
+      
+        if (name.length < 2 || !rating || review.length < 5) {
+          message.textContent = "Please complete all fields before submitting.";
+          return;
+        }
+      
+        message.textContent = "Submitting your review...";
+      
+        const { error } = await supabaseClient
+          .from("reviews")
+          .insert({
+            customer_name: name,
+            rating: rating,
+            review_text: review
+          });
+      
+        if (error) {
+          console.error("Review submission error:", error);
+          message.textContent = "Sorry, your review could not be submitted. Please try again.";
+          return;
+        }
+      
+        message.textContent = "Thank you! 💗 Your review has been submitted for approval.";
+      
+        document.getElementById("reviewName").value = "";
+        document.getElementById("reviewRating").value = "";
+        document.getElementById("reviewText").value = "";
+      }
          
 
 /* =====================================
