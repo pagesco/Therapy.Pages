@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Therapy Pages | Create Order</title>
+  <link rel="icon" type="image/png" href="ICON.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#faf7f5;color:#39312f;font-family:'Poppins',sans-serif}
+  .menu-toggle{position:fixed;top:18px;left:18px;z-index:1002;background:#745b55;color:white;border:0;border-radius:8px;padding:11px 15px;font-size:20px;cursor:pointer}
+  .sidebar{position:fixed;top:0;left:-280px;width:270px;height:100vh;background:#493b37;color:white;z-index:1001;padding:80px 22px 25px;transition:left .3s;box-shadow:4px 0 18px #0002}
+  .sidebar.open{left:0}
+  .sidebar h2{font-family:'Playfair Display',serif;margin:0 0 25px}
+  .sidebar a{display:block;color:white;text-decoration:none;padding:13px 15px;border-radius:8px;margin:6px 0;font-size:14px}
+  .sidebar a:hover,.sidebar a.active{background:#80675f}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:#0006;z-index:1000}
+  .sidebar-overlay.show{display:block}
+  header{background:#fff;padding:25px 5% 25px 75px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #00000008}
+  header h1{font-family:'Playfair Display',serif;font-size:27px;margin:0;color:#594640}
+  header small{letter-spacing:2px;color:#9b8178;font-size:10px}
+  .logout-btn{border:1px solid #b9a39b;background:white;color:#594640;padding:10px 17px;border-radius:7px;cursor:pointer}
+  main{max-width:1050px;margin:35px auto;padding:0 20px 50px}
+  h2{font-family:'Playfair Display',serif;color:#594640}
+  .panel{background:white;border-radius:13px;padding:25px;margin-bottom:22px;box-shadow:0 3px 18px #00000008}
+  .panel h2{margin-top:0}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+  .field{display:flex;flex-direction:column;gap:7px}
+  .field.full{grid-column:1/-1}
+  label{font-size:13px;font-weight:500;color:#66534d}
+  input,select,textarea{width:100%;padding:12px;border:1px solid #e3d8d3;border-radius:7px;font-family:inherit;font-size:13px;background:#fff;color:#39312f}
+  textarea{min-height:85px;resize:vertical}
+  button{font-family:inherit}
+  .primary-btn{background:#745b55;color:white;border:0;padding:12px 20px;border-radius:7px;cursor:pointer;font-weight:500}
+  .secondary-btn{background:#f3ece9;color:#654f48;border:0;padding:10px 15px;border-radius:7px;cursor:pointer}
+  .remove-btn{background:#fff0ee;color:#a3443b;border:0;padding:9px 12px;border-radius:6px;cursor:pointer}
+  .item-row{display:grid;grid-template-columns:minmax(0,2fr) 110px 100px 75px;gap:10px;align-items:end;padding:15px 0;border-bottom:1px solid #eee7e3}
+  .item-row:last-child{border-bottom:0}
+  .item-row .field{min-width:0}
+  .item-price{background:#f8f5f3}
+  .totals{max-width:360px;margin:20px 0 0 auto}
+  .total-line{display:flex;justify-content:space-between;padding:8px 0;font-size:14px}
+  .total-line.grand{border-top:1px solid #e5d9d4;margin-top:8px;padding-top:15px;font-weight:700;font-size:18px;color:#594640}
+  .message{margin-top:15px;font-size:13px;white-space:pre-wrap}
+  .success{color:#28784b}
+  .error{color:#b33b32}
+  #dashboard{display:none}
+  #loginScreen{max-width:420px;margin:100px auto;padding:30px;background:white;border-radius:13px;box-shadow:0 4px 22px #00000010}
+  #loginScreen h2{text-align:center}
+  #loginScreen .field{margin:15px 0}
+  #loginButton{width:100%;margin-top:10px}
+  @media(max-width:650px){
+   header{padding:75px 20px 20px;align-items:flex-start;gap:12px}
+   header h1{font-size:23px}
+   .form-grid{grid-template-columns:1fr}
+   .field.full{grid-column:auto}
+   .item-row{grid-template-columns:1fr 1fr}
+   .item-row .product-field{grid-column:1/-1}
+   .totals{max-width:none}
+   .panel{padding:18px}
+  }
+  </style>
+  </head>
+  
+  <body>
+  
+  <button class="menu-toggle" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+  
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+  
+  <nav class="sidebar" id="sidebar">
+    <h2>Therapy Pages ♡</h2>
+    <a href="admin.html">Dashboard</a>
+    <a href="orders.html">Recent Orders</a>
+    <a href="products.html">Products</a>
+    <a href="create-order.html" class="active">Create New Order</a>
+    <a href="find-order.html">Find an Order</a>
+  </nav>
+  
+  <div id="loginScreen">
+    <h2>Admin Login</h2>
+    <p style="text-align:center;font-size:13px;color:#88766f">Log in to manage your orders.</p>
+    <form id="loginForm">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <button class="primary-btn" id="loginButton" type="submit">Log In</button>
+      <div class="message error" id="loginMessage"></div>
+    </form>
+  </div>
+  
+  <div id="dashboard">
+    <header>
+      <div>
+        <h1>Therapy Pages ♡</h1>
+        <small>CREATE NEW ORDER</small>
+      </div>
+      <button class="logout-btn" id="logoutButton">Log Out</button>
+    </header>
+  
+    <main>
+      <div class="panel">
+        <h2>Create a New Order</h2>
+        <p style="font-size:13px;color:#897a74">Enter the customer's details and add the books they ordered.</p>
+      </div>
+  
+      <form id="createOrderForm">
+        <section class="panel">
+          <h2>Customer Information</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="customerName">Customer Name *</label>
+              <input id="customerName" required>
+            </div>
+            <div class="field">
+              <label for="customerPhone">Phone Number</label>
+              <input id="customerPhone" type="tel">
+            </div>
+            <div class="field">
+              <label for="customerEmail">Email Address</label>
+              <input id="customerEmail" type="email">
+            </div>
+            <div class="field">
+              <label for="orderSource">Order Source</label>
+              <select id="orderSource">
+                <option value="whatsapp">WhatsApp</option>
+                <option value="instagram">Instagram</option>
+                <option value="manual">Manual</option>
+                <option value="in_person">In Person</option>
+                <option value="website">Website</option>
+              </select>
+            </div>
+          </div>
+        </section>
+  
+        <section class="panel">
+          <h2>Order Items</h2>
+          <div id="orderItems"></div>
+          <button type="button" class="secondary-btn" id="addItemButton">+ Add Another Book</button>
+  
+          <div class="totals">
+            <div class="total-line">
+              <span>Subtotal</span>
+              <strong id="subtotalDisplay">JMD $0.00</strong>
+            </div>
+            <div class="field" style="margin-top:10px">
+              <label for="deliveryFee">Delivery Fee (JMD)</label>
+              <input type="number" id="deliveryFee" min="0" step="0.01" value="0">
+            </div>
+            <div class="total-line grand">
+              <span>Total</span>
+              <strong id="totalDisplay">JMD $0.00</strong>
+            </div>
+          </div>
+        </section>
+  
+        <section class="panel">
+          <h2>Payment & Order Details</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="paymentMethod">Payment Method</label>
+              <select id="paymentMethod">
+                <option value="cash">Cash</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="lynk">Lynk</option>
+                <option value="card">Card</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="paymentStatus">Payment Status</label>
+              <select id="paymentStatus">
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+                <option value="partially_paid">Partially Paid</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="orderStatus">Order Status</label>
+              <select id="orderStatus">
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="orderNotes">Order Notes</label>
+              <textarea id="orderNotes" placeholder="Add any special instructions or notes..."></textarea>
+            </div>
+          </div>
+        </section>
+  
+        <section class="panel">
+          <button type="submit" class="primary-btn" id="createOrderButton">Create Order</button>
+          <div class="message" id="orderMessage"></div>
+        </section>
+      </form>
+    </main>
+  </div>
+  
+  <script>
+  const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+  
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+  
+  let availableProducts = [];
+  
+  function toggleMenu(){
+    document.getElementById("sidebar").classList.toggle("open");
+    document.getElementById("sidebarOverlay").classList.toggle("show");
+  }
+  
+  function money(amount){
+    return "JMD $" + Number(amount || 0).toLocaleString("en-JM", {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    });
+  }
+  
+  function showLogin(){
+    document.getElementById("loginScreen").style.display="block";
+    document.getElementById("dashboard").style.display="none";
+  }
+  
+  function showDashboard(){
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("dashboard").style.display="block";
+  }
+  
+  async function loadProducts(){
+    const {data,error}=await supabaseClient
+      .from("products")
+      .select("id, name, price_jmd, stock_quantity, track_inventory, is_active")
+      .eq("is_active",true)
+      .order("name");
+  
+    if(error){
+      throw new Error("Could not load products: "+error.message);
+    }
+  
+    availableProducts=data || [];
+  
+    if(availableProducts.length===0){
+      document.getElementById("orderItems").innerHTML=
+        '<p style="color:#a3443b;font-size:13px">No active products were found. Please check your Products page.</p>';
+      return;
+    }
+  
+    document.getElementById("orderItems").innerHTML="";
+    addOrderItem();
+  }
+  
+  function addOrderItem(){
+    const container=document.getElementById("orderItems");
+    const row=document.createElement("div");
+    row.className="item-row";
+  
+    const productOptions=availableProducts.map(product =>
+      `<option value="${String(product.id)}">${escapeHTML(product.name)} — ${money(product.price_jmd)}</option>`
+    ).join("");
+  
+    row.innerHTML=`
+      <div class="field product-field">
+        <label>Book / Product</label>
+        <select class="item-product" required>
+          <option value="">Choose a product</option>
+          ${productOptions}
+        </select>
+      </div>
+      <div class="field">
+        <label>Price (JMD)</label>
+        <input class="item-price" value="0.00" readonly>
+      </div>
+      <div class="field">
+        <label>Quantity</label>
+        <input class="item-quantity" type="number" min="1" step="1" value="1" required>
+      </div>
+      <button type="button" class="remove-btn">Remove</button>
+    `;
+  
+    const productSelect=row.querySelector(".item-product");
+    productSelect.addEventListener("change",()=>{
+      const product=availableProducts.find(p=>String(p.id)===productSelect.value);
+      row.querySelector(".item-price").value=product ? Number(product.price_jmd).toFixed(2) : "0.00";
+      calculateTotals();
+    });
+  
+    row.querySelector(".item-quantity").addEventListener("input",calculateTotals);
+  
+    row.querySelector(".remove-btn").addEventListener("click",()=>{
+      row.remove();
+      calculateTotals();
+    });
+  
+    container.appendChild(row);
+    calculateTotals();
+  }
+  
+  function escapeHTML(value){
+    return String(value ?? "").replace(/[&<>"']/g,char=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    })[char]);
+  }
+  
+  function calculateTotals(){
+    let subtotal=0;
+  
+    document.querySelectorAll(".item-row").forEach(row=>{
+      const productId=row.querySelector(".item-product").value;
+      const product=availableProducts.find(p=>String(p.id)===productId);
+      const quantity=Number(row.querySelector(".item-quantity").value);
+  
+      if(product && Number.isInteger(quantity) && quantity>0){
+        subtotal+=Number(product.price_jmd)*quantity;
+      }
+    });
+  
+    const delivery=Math.max(0,Number(document.getElementById("deliveryFee").value)||0);
+  
+    document.getElementById("subtotalDisplay").textContent=money(subtotal);
+    document.getElementById("totalDisplay").textContent=money(subtotal+delivery);
+  }
+  
+  document.getElementById("addItemButton").addEventListener("click",()=>{
+    if(availableProducts.length===0){
+      alert("There are no active products to add.");
+      return;
+    }
+    addOrderItem();
+  });
+  
+  document.getElementById("deliveryFee").addEventListener("input",calculateTotals);
+  
+  document.getElementById("loginForm").addEventListener("submit",async event=>{
+    event.preventDefault();
+  
+    const button=document.getElementById("loginButton");
+    const message=document.getElementById("loginMessage");
+    button.disabled=true;
+    button.textContent="Logging in...";
+    message.textContent="";
+  
+    const {error}=await supabaseClient.auth.signInWithPassword({
+      email:document.getElementById("email").value.trim(),
+      password:document.getElementById("password").value
+    });
+  
+    button.disabled=false;
+    button.textContent="Log In";
+  
+    if(error){
+      message.textContent=error.message;
+      return;
+    }
+  
+    await checkSession();
+  });
+  
+  document.getElementById("logoutButton").addEventListener("click",async()=>{
+    await supabaseClient.auth.signOut();
+    showLogin();
+  });
+  
+  async function checkSession(){
+    const {data,error}=await supabaseClient.auth.getSession();
+  
+    if(error || !data.session){
+      showLogin();
+      return;
+    }
+  
+    showDashboard();
+  
+    try{
+      await loadProducts();
+    }catch(error){
+      document.getElementById("orderMessage").className="message error";
+      document.getElementById("orderMessage").textContent=error.message;
+    }
+  }
+  
+  document.getElementById("createOrderForm").addEventListener("submit",async event=>{
+    event.preventDefault();
+  
+    const button=document.getElementById("createOrderButton");
+    const message=document.getElementById("orderMessage");
+  
+    message.className="message";
+    message.textContent="";
+  
+    const items=[];
+    let invalid=false;
+  
+    document.querySelectorAll(".item-row").forEach(row=>{
+      const productId=row.querySelector(".item-product").value;
+      const quantity=Number(row.querySelector(".item-quantity").value);
+  
+      if(!productId || !Number.isInteger(quantity) || quantity<1){
+        invalid=true;
+        return;
+      }
+  
+      items.push({
+        product_id:productId,
+        quantity:quantity
+      });
+    });
+  
+    if(invalid || items.length===0){
+      message.className="message error";
+      message.textContent="Please choose a product and enter a valid quantity for every item.";
+      return;
+    }
+  
+    const deliveryFee=Number(document.getElementById("deliveryFee").value);
+  
+    if(!Number.isFinite(deliveryFee) || deliveryFee<0){
+      message.className="message error";
+      message.textContent="Please enter a valid delivery fee of zero or more.";
+      return;
+    }
+  
+    const orderDetails={
+      p_customer_name:document.getElementById("customerName").value.trim(),
+      p_customer_phone:document.getElementById("customerPhone").value.trim() || null,
+      p_customer_email:document.getElementById("customerEmail").value.trim() || null,
+      p_order_source:document.getElementById("orderSource").value,
+      p_order_status:document.getElementById("orderStatus").value,
+      p_payment_status:document.getElementById("paymentStatus").value,
+      p_payment_method:document.getElementById("paymentMethod").value,
+      p_delivery_fee:deliveryFee,
+      p_notes:document.getElementById("orderNotes").value.trim() || null,
+      p_items:items
+    };
+  
+    if(!orderDetails.p_customer_name){
+      message.className="message error";
+      message.textContent="Please enter the customer's name.";
+      return;
+    }
+  
+    button.disabled=true;
+    button.textContent="Creating Order...";
+  
+    const {data,error}=await supabaseClient.rpc("create_manual_order",orderDetails);
+  
+    button.disabled=false;
+    button.textContent="Create Order";
+  
+    if(error){
+      message.className="message error";
+      message.textContent="Could not create order: "+error.message;
+      return;
+    }
+  
+    const result=Array.isArray(data) ? data[0] : data;
+    const invoiceNumber=result?.invoice_number || "Created successfully";
+  
+    message.className="message success";
+    message.textContent="Order created successfully! Order number: "+invoiceNumber;
+  
+    document.getElementById("createOrderForm").reset();
+    document.getElementById("deliveryFee").value=0;
+    document.getElementById("orderItems").innerHTML="";
+  
+    addOrderItem();
+    calculateTotals();
+  });
+  
+  checkSession();
+  </script>
+  </body>
+</html>
