@@ -4,503 +4,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Therapy Pages | Admin Dashboard</title>
+<title>Therapy Pages | Dashboard</title>
 <link rel="icon" type="image/png" href="ICON.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root {
-  --pink: #d99ab2;
-  --deep-pink: #a85f7c;
-  --pale-pink: #faedf2;
-  --cream: #fffaf4;
-  --text: #57434b;
-  --muted: #927d85;
-  --white: #ffffff;
-  --border: #f0dfe6;
-  --green: #668568;
+:root{
+  --pink:#d99ab2;
+  --deep-pink:#a85f7c;
+  --pale-pink:#faedf2;
+  --cream:#fffaf4;
+  --text:#57434b;
+  --muted:#927d85;
+  --border:#f0dfe6;
 }
+*{box-sizing:border-box}
+body{margin:0;font-family:'Poppins',sans-serif;color:var(--text);background:var(--cream)}
+button,input{font:inherit}
+button{cursor:pointer}
 
-* {
-  box-sizing: border-box;
+.menu-toggle{
+  position:fixed;top:18px;left:18px;z-index:1002;
+  background:var(--deep-pink);color:white;border:0;
+  border-radius:10px;padding:11px 15px;font-size:20px;
 }
-
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  color: var(--text);
-  background: var(--cream);
+.sidebar{
+  position:fixed;top:0;left:-280px;width:270px;height:100vh;
+  background:white;z-index:1001;padding:80px 18px 25px;
+  transition:left .3s;box-shadow:4px 0 20px #00000012;
 }
-
-button, input {
-  font: inherit;
+.sidebar.open{left:0}
+.sidebar h2{
+  font:600 25px 'Playfair Display',serif;
+  color:var(--deep-pink);margin:0 0 25px;
 }
-
-button {
-  cursor: pointer;
+.sidebar a{
+  display:block;text-decoration:none;color:var(--text);
+  padding:13px 15px;border-radius:10px;margin:6px 0;font-size:14px;
 }
-
-#loginScreen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background:
-    radial-gradient(circle at 15% 20%, #f8e1ea 0, transparent 35%),
-    radial-gradient(circle at 85% 80%, #f4e9dc 0, transparent 35%),
-    var(--cream);
+.sidebar a:hover,.sidebar a.active{
+  background:var(--pale-pink);color:var(--deep-pink);
 }
-
-.login-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 42px 32px;
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  background: rgba(255,255,255,.94);
-  box-shadow: 0 15px 45px rgba(130,75,95,.10);
-  text-align: center;
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:#0006;z-index:1000;
 }
+.sidebar-overlay.show{display:block}
 
-.brand {
-  color: var(--deep-pink);
-  font-family: 'Playfair Display', serif;
-  font-size: 35px;
-  margin: 0 0 8px;
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  background:radial-gradient(circle at 15% 20%,#f8e1ea 0,transparent 35%),
+  radial-gradient(circle at 85% 80%,#f4e9dc 0,transparent 35%),var(--cream);
 }
-
-.login-card p {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 28px;
+.login-card{
+  width:100%;max-width:420px;padding:42px 32px;
+  border:1px solid var(--border);border-radius:24px;
+  background:white;box-shadow:0 15px 45px #824b5f1a;text-align:center;
 }
-
-.field {
-  width: 100%;
-  padding: 14px 15px;
-  margin-bottom: 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: #fffdfd;
-  outline: none;
+.brand{
+  color:var(--deep-pink);font:600 35px 'Playfair Display',serif;
+  margin:0 0 8px;
 }
-
-.field:focus {
-  border-color: var(--pink);
-  box-shadow: 0 0 0 3px #f9e9ef;
+.login-card p{color:var(--muted);font-size:13px;margin-bottom:28px}
+.field{
+  width:100%;padding:14px 15px;margin-bottom:14px;
+  border:1px solid var(--border);border-radius:12px;
+  background:#fffdfd;outline:none;
 }
-
-/* ORDER FORM */
-.order-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+.field:focus{border-color:var(--pink);box-shadow:0 0 0 3px #f9e9ef}
+.primary-btn{
+  width:100%;padding:14px;border:0;border-radius:12px;
+  color:white;background:var(--deep-pink);font-weight:600;
 }
+.primary-btn:hover{background:#914d69}
+#loginMessage{color:#a34c62;font-size:13px;margin-top:14px}
 
-.order-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+#dashboard{display:none;min-height:100vh}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;padding:20px 5% 20px 75px;background:white;
+  border-bottom:1px solid var(--border);
 }
-
-.order-field label {
-  font-size: 12px;
-  color: var(--muted);
+.topbar h1{
+  margin:0;color:var(--deep-pink);
+  font:600 27px 'Playfair Display',serif;
 }
-
-.order-field input,
-.order-field select,
-.order-field textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: #fffdfd;
-  color: var(--text);
-  font: inherit;
-  outline: none;
+.topbar small{
+  display:block;color:var(--muted);font-size:10px;
+  letter-spacing:2px;margin-top:3px;
 }
-
-.order-field input:focus,
-.order-field select:focus,
-.order-field textarea:focus {
-  border-color: var(--pink);
-  box-shadow: 0 0 0 3px #f9e9ef;
+.logout-btn{
+  padding:10px 17px;border:1px solid var(--border);
+  border-radius:10px;color:var(--deep-pink);background:white;
 }
-
-.order-items{
-  margin-top: 22px;
+main{width:min(1150px,92%);margin:35px auto}
+.welcome{margin-bottom:25px}
+.welcome h2{margin:0 0 5px;font:600 30px 'Playfair Display',serif}
+.welcome p{margin:0;color:var(--muted);font-size:13px}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:18px;margin-bottom:28px;
 }
-
-.order-item {
-  display: grid;
-  grid-template-columns: 2fr 100px 90px 40px;
-  gap: 10px;
-  align-items: end;
-  margin-bottom: 12px;
+.stat-card,.panel{
+  background:white;border:1px solid var(--border);
+  border-radius:18px;padding:22px;
+  box-shadow:0 5px 20px #824b5f0a;
 }
-
-.order-item select,
-.order-item input {
-  width: 100%;
-  min-width: 0;
-  padding: 11px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: white;
-  color: var(--text);
-  font: inherit;
+.stat-card span{color:var(--muted);font-size:12px}
+.stat-card strong{
+  display:block;margin-top:8px;color:var(--deep-pink);
+  font:600 30px 'Playfair Display',serif;
 }
-
-.remove-item {
-  height: 42px;
-  border: none;
-  border-radius: 9px;
-  background: #faedf2;
-  color: #a34c62;
-  font-size: 19px;
+.panel{margin-bottom:22px}
+.panel-heading{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:16px;
 }
-
-.secondary-btn {
-  padding: 10px 15px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--deep-pink);
-  background: var(--pale-pink);
+.panel h3{margin:0;font:600 22px 'Playfair Display',serif}
+.refresh-btn{
+  border:1px solid var(--border);background:var(--pale-pink);
+  color:var(--deep-pink);padding:8px 13px;border-radius:9px;
 }
-
-.order-total {
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: 12px;
-  background: var(--pale-pink);
-  text-align: right;
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:550px;font-size:13px}
+th,td{padding:13px 12px;text-align:left;border-bottom:1px solid #f5eaf0}
+th{color:var(--muted);font-weight:500;background:#fffafd}
+.empty{color:var(--muted);padding:20px 0;font-size:13px}
+.status{
+  display:inline-block;padding:5px 9px;border-radius:20px;
+  background:var(--pale-pink);color:var(--deep-pink);font-size:11px;
 }
-
-.order-total p {
-  margin: 5px 0;
-  font-size: 13px;
+#dashboardMessage{font-size:13px;margin-top:12px;white-space:pre-wrap}
+.quick-links{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.quick-link{
+  display:block;text-decoration:none;color:var(--deep-pink);
+  background:var(--pale-pink);padding:16px;border-radius:12px;font-size:13px;
 }
+.quick-link:hover{background:#f5dfe8}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
 
-.order-total strong {
-  color: var(--deep-pink);
-  font: 600 25px 'Playfair Display', serif;
-}
-
-#createOrderButton {
-  margin-top: 18px;
-  max-width: 260px;
-}
-
-@media (max-width: 650px) {
-  .order-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .order-item {
-    grid-template-columns: 1fr 75px 35px;
-  }
-
-  .order-item .item-price {
-    display: none;
-  }
-
-  #createOrderButton {
-    max-width: none;
-  }
-}
-
-.primary-btn {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  background: var(--deep-pink);
-  font-weight: 600;
-  transition: .2s;
-}
-
-.primary-btn:hover {
-  background: #914d69;
-}
-
-#loginMessage, #dashboardMessage {
-  color: #a34c62;
-  font-size: 13px;
-  margin-top: 14px;
-  min-height: 20px;
-}
-
-#dashboard {
-  display: none;
-  min-height: 100vh;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 18px 5%;
-  background: white;
-  border-bottom: 1px solid var(--border);
-}
-
-.topbar h1 {
-  margin: 0;
-  color: var(--deep-pink);
-  font: 600 27px 'Playfair Display', serif;
-}
-
-.topbar small {
-  display: block;
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 2px;
-  margin-top: 3px;
-}
-
-.logout-btn {
-  padding: 10px 17px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--deep-pink);
-  background: white;
-}
-
-main {
-  width: min(1150px, 92%);
-  margin: 35px auto;
-}
-
-.welcome {
-  margin-bottom: 25px;
-}
-
-.welcome h2 {
-  margin: 0 0 5px;
-  font: 600 30px 'Playfair Display', serif;
-}
-
-.welcome p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 28px;
-}
-
-.stat-card, .panel {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 5px 20px rgba(130,75,95,.04);
-}
-
-.stat-card span {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.stat-card strong {
-  display: block;
-  margin-top: 8px;
-  color: var(--deep-pink);
-  font: 600 30px 'Playfair Display', serif;
-}
-
-.panel {
-  margin-bottom: 22px;
-  overflow: hidden;
-}
-
-.panel-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.panel h3 {
-  margin: 0;
-  font: 600 22px 'Playfair Display', serif;
-}
-
-.refresh-btn {
-  border: 1px solid var(--border);
-  background: var(--pale-pink);
-  color: var(--deep-pink);
-  padding: 8px 13px;
-  border-radius: 9px;
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 570px;
-  font-size: 13px;
-}
-
-th, td {
-  padding: 13px 12px;
-  text-align: left;
-  border-bottom: 1px solid #f5eaf0;
-}
-
-th {
-  color: var(--muted);
-  font-weight: 500;
-  background: #fffafd;
-}
-
-td {
-  color: var(--text);
-}
-
-.empty {
-  color: var(--muted);
-  padding: 20px 0;
-  font-size: 13px;
-}
-
-.status {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 20px;
-  background: var(--pale-pink);
-  color: var(--deep-pink);
-  font-size: 11px;
-}
-
-footer {
-  text-align: center;
-  color: var(--muted);
-  font-size: 11px;
-  padding: 25px;
-}
-
-@media (max-width: 650px) {
-  .topbar {
-    padding: 15px 4%;
-  }
-
-  .topbar h1 {
-    font-size: 23px;
-  }
-
-  .stats {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 17px;
-  }
-
-  .welcome h2 {
-    font-size: 25px;
-  }
-
-  .panel {
-    padding: 16px;
-  }
-}
-
-/* ADMIN SIDEBAR NAVIGATION */
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 240px;
-  flex-shrink: 0;
-  background: white;
-  border-right: 1px solid var(--border);
-  padding: 25px 16px;
-}
-
-.sidebar h2 {
-  font-family: 'Playfair Display', serif;
-  color: var(--deep-pink);
-  margin: 0 0 25px;
-}
-
-.sidebar button {
-  display: block;
-  width: 100%;
-  padding: 13px 15px;
-  margin-bottom: 8px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text);
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-}
-
-.sidebar button.active,
-.sidebar button:hover {
-  background: var(--pale-pink);
-  color: var(--deep-pink);
-}
-
-.admin-content {
-  flex: 1;
-  min-width: 0;
-  padding: 25px;
-}
-
-.admin-page {
-  display: none;
-}
-
-.admin-page.active {
-  display: block;
-}
-
-@media (max-width: 700px) {
-  .admin-layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .sidebar button {
-    display: inline-block;
-    width: auto;
-    margin-right: 5px;
-  }
-
-  .admin-content {
-    padding: 16px;
-  }
+@media(max-width:650px){
+  .topbar{padding:75px 20px 20px;align-items:flex-start}
+  .topbar h1{font-size:23px}
+  .stats{grid-template-columns:1fr;gap:12px}
+  .stat-card{padding:17px}
+  .welcome h2{font-size:25px}
+  .panel{padding:16px}
+  .quick-links{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<nav class="sidebar" id="sidebar">
+  <h2>Therapy Pages ♡</h2>
+  <a href="admin.html" class="active">Dashboard</a>
+  <a href="orders.html">Recent Orders</a>
+  <a href="products.html">Products</a>
+  <a href="create-order.html">Create New Order</a>
+  <a href="find-order.html">Find an Order</a>
+</nav>
 
 <section id="loginScreen">
   <div class="login-card">
@@ -524,33 +192,6 @@ footer {
 </section>
 
 <section id="dashboard">
-  <div class="admin-layout">
-
-  <aside class="sidebar">
-    <h2>Therapy Pages ♡</h2>
-
-    <button type="button" class="active" data-page="overviewPage">
-      Dashboard
-    </button>
-
-    <button type="button" data-page="ordersPage">
-      Recent Orders
-    </button>
-
-    <button type="button" data-page="productsPage">
-      Products
-    </button>
-
-    <button type="button" data-page="createOrderPage">
-      Create New Order
-    </button>
-
-    <button type="button" data-page="findOrderPage">
-      Find an Order
-    </button>
-  </aside>
-
-  <div class="admin-content">
   <header class="topbar">
     <div>
       <h1>Therapy Pages ♡</h1>
@@ -560,161 +201,27 @@ footer {
   </header>
 
   <main>
-    <section class="admin-page active" id="overviewPage">
-      <div class="welcome">
-        <h2>Welcome back!</h2>
-        <p>Here's what's happening with your business.</p>
-      </div>
-    </section>
+    <div class="welcome">
+      <h2>Welcome back!</h2>
+      <p>Here's what's happening with your business.</p>
+    </div>
 
     <div class="stats">
       <div class="stat-card">
         <span>Total Orders</span>
         <strong id="totalOrders">—</strong>
       </div>
-
       <div class="stat-card">
         <span>Pending Orders</span>
         <strong id="pendingOrders">—</strong>
       </div>
-
       <div class="stat-card">
         <span>Active Products</span>
         <strong id="totalProducts">—</strong>
       </div>
     </div>
 
-    <section class="admin-page" id="createOrderPage">
-  <div class="panel">
-    <div class="panel-heading">
-      <h3>Create a New Order ♡</h3>
-    </div>
-  
-    <form id="orderForm">
-      <div class="order-grid">
-  
-        <div class="order-field">
-          <label for="customerName">Customer Name *</label>
-          <input id="customerName" required placeholder="Customer's full name">
-        </div>
-  
-        <div class="order-field">
-          <label for="customerPhone">Phone Number</label>
-          <input id="customerPhone" type="tel" placeholder="Customer's phone">
-        </div>
-  
-        <div class="order-field">
-          <label for="customerEmail">Email Address</label>
-          <input id="customerEmail" type="email" placeholder="Customer's email">
-        </div>
-  
-        <div class="order-field">
-          <label for="orderSource">Where did the order come from?</label>
-          <select id="orderSource">
-            <option value="whatsapp">WhatsApp</option>
-            <option value="instagram">Instagram</option>
-            <option value="manual">Other / Manual</option>
-            <option value="in_person">In Person</option>
-            <option value="website">Website</option>
-          </select>
-        </div>
-
-      <div class="order-field">
-        <label for="paymentMethod">Payment Method</label>
-        <select id="paymentMethod">
-          <option value="">Not selected</option>
-          <option value="Cash">Cash</option>
-          <option value="Bank Transfer">Bank Transfer</option>
-          <option value="Online Payment">Online Payment</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="order-field">
-        <label for="paymentStatus">Payment Status</label>
-        <select id="paymentStatus">
-          <option value="pending">Pending / Unpaid</option>
-          <option value="partial">Partially Paid</option>
-          <option value="paid">Paid</option>
-        </select>
-      </div>
-
-      <div class="order-field">
-        <label for="orderStatus">Order Status</label>
-        <select id="orderStatus">
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="processing">Processing</option>
-          <option value="ready">Ready</option>
-          <option value="delivered">Delivered</option>
-        </select>
-      </div>
-
-      <div class="order-field">
-        <label for="deliveryFee">Delivery Fee (JMD)</label>
-        <input id="deliveryFee" type="number" min="0" step="0.01" value="0">
-      </div>
-    </div>
-
-    <div class="order-items">
-      <h3>Order Items</h3>
-      <div id="orderItems"></div>
-      <button type="button" class="secondary-btn" id="addItemButton">
-        + Add Another Book
-      </button>
-    </div>
-
-    <div class="order-field" style="margin-top:20px;">
-      <label for="orderNotes">Order Notes</label>
-      <textarea id="orderNotes" rows="3"
-        placeholder="Additional details about this order..."></textarea>
-    </div>
-
-      <div class="order-total">
-        <p>Subtotal: <strong id="orderSubtotal">J$0.00</strong></p>
-        <p>Delivery: <strong id="orderDelivery">J$0.00</strong></p>
-        <p>Total: <strong id="orderTotal">J$0.00</strong></p>
-      </div>
-  
-      <button type="submit" class="primary-btn" id="createOrderButton">
-        Create Order
-      </button>
-  
-      <div id="orderMessage" role="status" aria-live="polite"></div>
-    </form>
-  </div>
-</section>
-
-    <section class="admin-page" id="findOrderPage">
-      <div class="panel">
-        <div class="panel-heading">
-          <h3>Find an Order ♡</h3>
-        </div>
-    
-      <div class="order-grid">
-        <div class="order-field">
-          <label for="orderSearch">Search by Order Number</label>
-          <input
-            id="orderSearch"
-            type="text"
-            placeholder="e.g. TP-20261108-00001"
-          >
-        </div>
-    
-        <div class="order-field">
-          <label>&nbsp;</label>
-          <button type="button" class="primary-btn" id="searchOrderButton">
-            Search Orders
-          </button>
-        </div>
-      </div>
-    
-      <div id="orderSearchResults" style="margin-top:18px;"></div>
-    </div>
-  </section>
-
-<section class="admin-page" id="ordersPage">
-    <div class="panel">
+    <section class="panel">
       <div class="panel-heading">
         <h3>Recent Orders</h3>
         <button class="refresh-btn" id="refreshButton">Refresh</button>
@@ -729,1069 +236,196 @@ footer {
               <th>Total</th>
               <th>Order Status</th>
               <th>Payment</th>
-              <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="ordersTable">
-            <tr><td colspan="6" class="empty">Loading orders...</td></tr>
+          <tbody id="recentOrdersTable">
+            <tr><td colspan="5" class="empty">Loading orders...</td></tr>
           </tbody>
         </table>
       </div>
       <div id="dashboardMessage" role="status"></div>
-    </div>
-  </section>
-
-    <section class="admin-page" id="productsPage">
-      <div class="panel">
-        <div class="panel-heading">
-          <h3>Your Products</h3>
-        </div>
     </section>
-    
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="productsTable">
-            <tr><td colspan="4" class="empty">Loading products...</td></tr>
-          </tbody>
-        </table>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h3>Quick Links ♡</h3>
       </div>
-    </div>
+      <div class="quick-links">
+        <a class="quick-link" href="orders.html">View Recent Orders →</a>
+        <a class="quick-link" href="products.html">View Products →</a>
+        <a class="quick-link" href="create-order.html">Create New Order →</a>
+        <a class="quick-link" href="find-order.html">Find an Order →</a>
+      </div>
+    </section>
   </main>
 
   <footer>Made with love ♡ Therapy Pages</footer>
 </section>
 
-          <script>
-          /* ADD YOUR SUPABASE DETAILS HERE */
-          const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
-          const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
-          
-          /* CONNECT TO SUPABASE */
-          const supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-          );
-          
-          const loginScreen = document.getElementById("loginScreen");
-          const dashboard = document.getElementById("dashboard");
-          const loginMessage = document.getElementById("loginMessage");
-          const dashboardMessage = document.getElementById("dashboardMessage");
-          let availableProducts = [];
-          
-          function showDashboard() {
-            loginScreen.style.display = "none";
-            dashboard.style.display = "block";
-          }
-          
-          function showLogin() {
-            dashboard.style.display = "none";
-            loginScreen.style.display = "flex";
-          }
-          
-          function showError(element, message) {
-            element.textContent = message;
-          }
-          
-          function addCell(row, value) {
-            const cell = document.createElement("td");
-            cell.textContent = value ?? "—";
-            row.appendChild(cell);
-            return cell;
-          }
-          
-          function money(value) {
-            return new Intl.NumberFormat("en-JM", {
-              style: "currency",
-              currency: "JMD",
-              maximumFractionDigits: 2
-            }).format(Number(value || 0));
-          }
-
-        /* ADMIN LOGIN */
-        document.getElementById("loginForm").addEventListener("submit", async (event) => {
-          event.preventDefault();
-        
-          const button = document.getElementById("loginButton");
-          button.disabled = true;
-          button.textContent = "Signing in...";
-          loginMessage.textContent = "";
-        
-          try {
-            const { error } = await supabaseClient.auth.signInWithPassword({
-              email: document.getElementById("email").value.trim(),
-              password: document.getElementById("password").value
-            });
-        
-            if (error) throw error;
-        
-            showDashboard();
-            await loadDashboard();
-        
-          } catch (error) {
-            showError(loginMessage, error.message || "Unable to sign in.");
-          } finally {
-            button.disabled = false;
-            button.textContent = "Sign In";
-          }
-        });
-        
-          /* DELETE AN ORDER */
-        async function deleteOrder(orderId, invoiceNumber) {
-        
-          const confirmed = confirm(
-            "Are you sure you want to permanently delete order " +
-            invoiceNumber +
-            "?\n\nThis action cannot be undone."
-          );
-        
-          if (!confirmed) return;
-        
-          dashboardMessage.textContent = "Deleting order...";
-        
-          try {
-        
-            const { data, error } = await supabaseClient
-              .from("orders")
-              .delete()
-              .eq("id", orderId)
-              .select("id")
-              .single();
-        
-            if (error) throw error;
-        
-            await loadDashboard();
-        
-            dashboardMessage.style.color = "#668568";
-            dashboardMessage.textContent =
-              "Order " + invoiceNumber + " was deleted successfully.";
-        
-          } catch (error) {
-        
-            dashboardMessage.style.color = "#a34c62";
-            dashboardMessage.textContent =
-              "Could not delete order: " +
-              (error.message || "Please try again.");
-        
-          }
-        }
-
-        /* UPDATE ORDER STATUS */
-      async function updateOrderStatus(orderId, newStatus, invoiceNumber, selectElement) {
-      
-        selectElement.disabled = true;
-        dashboardMessage.textContent = "Updating order status...";
-      
-        try {
-      
-          const { error } = await supabaseClient
-            .from("orders")
-            .update({ order_status: newStatus })
-            .eq("id", orderId);
-      
-          if (error) throw error;
-      
-          dashboardMessage.style.color = "#668568";
-          dashboardMessage.textContent =
-            "Order " + invoiceNumber + " updated successfully.";
-      
-          await loadDashboard();
-      
-        } catch (error) {
-      
-          dashboardMessage.style.color = "#a34c62";
-          dashboardMessage.textContent =
-            "Could not update order: " +
-            (error.message || "Please try again.");
-      
-          selectElement.disabled = false;
-        }
-      }
-
-        /* UPDATE PAYMENT STATUS */
-
-          async function updatePaymentStatus(orderId, newStatus, invoiceNumber, selectElement) {
-          
-            selectElement.disabled = true;
-          
-            dashboardMessage.textContent = "Updating payment status...";
-          
-            try {
-          
-              const { error } = await supabaseClient
-                .from("orders")
-                .update({ payment_status: newStatus })
-                .eq("id", orderId);
-          
-              if (error) throw error;
-          
-              await loadDashboard();
-          
-              dashboardMessage.style.color = "#668568";
-          
-              dashboardMessage.textContent =
-                "Payment status for order " + invoiceNumber + " updated successfully.";
-          
-            } catch (error) {
-          
-              dashboardMessage.style.color = "#a34c62";
-          
-              dashboardMessage.textContent =
-                "Could not update payment status: " +
-                (error.message || "Please try again.");
-          
-              selectElement.disabled = false;
-          
-            }
-          
-          }
-
-/* LOAD BUSINESS INFORMATION */
-async function loadDashboard() {
-  dashboardMessage.textContent = "Loading your business information...";
-
-  try {
-    const { data: orders, error: ordersError } = await supabaseClient
-      .from("orders")
-      .select("id, invoice_number, customer_name, total, order_status, payment_status, created_at")
-      .order("created_at", { ascending: false })
-      .limit(50);
-
-    if (ordersError) throw ordersError;
-
-    const { data: products, error: productsError } = await supabaseClient
-      .from("products")
-      .select("id, name, price_jmd, stock_quantity, track_inventory, is_active")
-      .order("name");
-
-    if (productsError) throw productsError;
-    availableProducts = products.filter(product => product.is_active);
-    if (!document.getElementById("orderItems").children.length) {
-      addOrderItem();
-    }
-
-    document.getElementById("totalOrders").textContent = orders.length;
-    document.getElementById("pendingOrders").textContent =
-      orders.filter(order => order.order_status === "pending").length;
-
-    document.getElementById("totalProducts").textContent =
-      products.filter(product => product.is_active).length;
-
-    const ordersTable = document.getElementById("ordersTable");
-    ordersTable.replaceChildren();
-
-    if (!orders.length) {
-      const row = ordersTable.insertRow();
-      const cell = row.insertCell();
-      cell.colSpan = 6;
-      cell.className = "empty";
-      cell.textContent = "No orders have been received yet.";
-    } else {
-      orders.forEach(order => {
-        const row = ordersTable.insertRow();
-        addCell(row, order.invoice_number || "Not assigned");
-        addCell(row, order.customer_name);
-        addCell(row, money(order.total));
-          
-        const statusCell = addCell(row, "");
-          
-          const statusSelect = document.createElement("select");
-          statusSelect.className = "field";
-          
-          const statusOptions = [
-            ["pending", "Pending"],
-            ["confirmed", "Confirmed"],
-            ["processing", "Processing"],
-            ["ready", "Ready"],
-            ["delivered", "Delivered"],
-            ["cancelled", "Cancelled"]
-          ];
-          
-          statusOptions.forEach(([value, label]) => {
-            const option = document.createElement("option");
-            option.value = value;
-            option.textContent = label;
-            statusSelect.appendChild(option);
-          });
-          
-          statusSelect.value = order.order_status || "pending";
-          
-          statusSelect.addEventListener("change", () => {
-            updateOrderStatus(
-              order.id,
-              statusSelect.value,
-              order.invoice_number,
-              statusSelect
-            );
-          });
-          
-          statusCell.appendChild(statusSelect);
-          const paymentCell = addCell(row, "");
-
-            const paymentSelect = document.createElement("select");
-            paymentSelect.className = "field";
-            
-            const paymentOptions = [
-              ["pending", "Pending / Unpaid"],
-              ["partial", "Partially Paid"],
-              ["paid", "Paid"],
-              ["refunded", "Refunded"]
-            ];
-            
-            paymentOptions.forEach(([value, label]) => {
-              const option = document.createElement("option");
-              option.value = value;
-              option.textContent = label;
-              paymentSelect.appendChild(option);
-            });
-            
-            paymentSelect.value = order.payment_status || "pending";
-            
-            paymentSelect.addEventListener("change", () => {
-              updatePaymentStatus(
-                order.id,
-                paymentSelect.value,
-                order.invoice_number,
-                paymentSelect
-              );
-            });
-            
-            paymentCell.appendChild(paymentSelect);
-
-        
-                    // DELETE ORDER BUTTON
-            const actionsCell = addCell(row, "");
-            
-            const deleteButton = document.createElement("button");
-            deleteButton.type = "button";
-            deleteButton.className = "secondary-btn";
-            deleteButton.textContent = "Delete";
-            
-            deleteButton.addEventListener("click", () => {
-              deleteOrder(order.id, order.invoice_number);
-            });
-            
-            actionsCell.appendChild(deleteButton);
-            });
-          }
-
-          const productsTable = document.getElementById("productsTable");
-          productsTable.replaceChildren();
-      
-          if (!products.length) {
-            const row = productsTable.insertRow();
-            const cell = row.insertCell();
-            cell.colSpan = 4;
-            cell.className = "empty";
-            cell.textContent = "No products found.";
-          } else {
-            products.forEach(product => {
-              const row = productsTable.insertRow();
-              addCell(row, product.name);
-              addCell(row, money(product.price_jmd));
-              addCell(row, product.track_inventory === false
-                ? "Not tracked"
-                : product.stock_quantity);
-      
-              addCell(row, product.is_active ? "Active" : "Inactive");
-            });
-          }
-
-          dashboardMessage.textContent = "";
-             
-
-      document.getElementById("searchOrderButton").addEventListener("click", async () => {
-        const searchInput = document.getElementById("orderSearch");
-        const results = document.getElementById("orderSearchResults");
-        const orderNumber = searchInput.value.trim();
-      
-        results.replaceChildren();
-      
-        if (!orderNumber) {
-          results.textContent = "Please enter an order number.";
-          return;
-        }
-      
-        results.textContent = "Searching...";
-      
-        try {
-          const { data: order, error } = await supabaseClient
-            .from("orders")
-            .select("*")
-            .eq("invoice_number", orderNumber)
-            .maybeSingle();
-      
-          if (error) throw error;
-      
-          results.replaceChildren();
-      
-          if (!order) {
-            results.textContent = "No order found with that number.";
-            return;
-          }
-      
-          const heading = document.createElement("h3");
-          heading.textContent = "Order Found ♡";
-          results.appendChild(heading);
-      
-          const details = [
-            ["Order Number", order.invoice_number],
-            ["Customer", order.customer_name],
-            ["Phone", order.customer_phone],
-            ["Email", order.customer_email],
-            ["Order Source", order.order_source],
-            ["Order Date", new Date(order.created_at).toLocaleString()],
-            ["Subtotal", money(order.subtotal)],
-            ["Delivery Fee", money(order.delivery_fee)],
-            ["Total", money(order.total)],
-            ["Order Status", order.order_status],
-            ["Payment Status", order.payment_status],
-            ["Payment Method", order.payment_method],
-            ["Notes", order.notes]
-          ];
-      
-          details.forEach(([label, value]) => {
-            const paragraph = document.createElement("p");
-            paragraph.style.fontSize = "13px";
-      
-            const strong = document.createElement("strong");
-            strong.textContent = label + ": ";
-      
-            paragraph.append(strong, document.createTextNode(value ?? "—"));
-            results.appendChild(paragraph);
-          });
-
-    /* SHOW ORDER ITEMS */
-
-    const itemHeading = document.createElement("h4");
-    itemHeading.textContent = "Books in this Order";
-    results.appendChild(itemHeading);
-
-    const { data: items, error: itemsError } = await supabaseClient
-      .from("order_items")
-      .select("product_id, product_name, unit_price, quantity, line_total")
-      .eq("order_id", order.id);
-
-    if (itemsError) throw itemsError;
-
-    if (!items || !items.length) {
-      const empty = document.createElement("p");
-      empty.textContent = "No order items found.";
-      results.appendChild(empty);
-    } else {
-      items.forEach(item => {
-        const paragraph = document.createElement("p");
-        paragraph.style.fontSize = "13px";
-        paragraph.textContent =
-          `${item.product_name} × ${item.quantity} — ${money(item.line_total)}`;
-        results.appendChild(paragraph);
-      });
-    }
-
-    /* EDIT ORDER BUTTON */
-
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.className = "primary-btn";
-    editButton.style.marginTop = "20px";
-    editButton.textContent = "✎ Edit Order";
-    results.appendChild(editButton);
-
-    /* EDIT FORM */
-
-    const editSection = document.createElement("div");
-    editSection.style.marginTop = "20px";
-    editSection.style.padding = "20px";
-    editSection.style.background = "#fff8f8";
-    editSection.style.borderRadius = "12px";
-    editSection.style.border = "1px solid #eadada";
-    editSection.hidden = true;
-
-    results.appendChild(editSection);
-
-    const editHeading = document.createElement("h4");
-    editHeading.textContent = "Edit Order Details ♡";
-    editSection.appendChild(editHeading);
-
-    function createField(labelText, element) {
-      const wrapper = document.createElement("div");
-      wrapper.style.marginBottom = "14px";
-
-      const label = document.createElement("label");
-      label.textContent = labelText;
-      label.style.display = "block";
-      label.style.marginBottom = "6px";
-
-      element.className = "field";
-      element.style.width = "100%";
-      element.style.boxSizing = "border-box";
-
-      wrapper.append(label, element);
-      editSection.appendChild(wrapper);
-
-      return element;
-    }
-
-    function createInput(value, type = "text") {
-      const element = document.createElement("input");
-      element.type = type;
-      element.value = value ?? "";
-      return element;
-    }
-
-    function createSelect(options, selectedValue) {
-      const element = document.createElement("select");
-
-      options.forEach(([value, label]) => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = label;
-        element.appendChild(option);
-      });
-
-      element.value = selectedValue ?? "";
-      return element;
-    }
-
-    /* CUSTOMER INFORMATION */
-
-    const customerNameInput = createField(
-      "Customer Name",
-      createInput(order.customer_name)
-    );
-
-    const customerPhoneInput = createField(
-      "Phone Number",
-      createInput(order.customer_phone)
-    );
-
-    const customerEmailInput = createField(
-      "Email Address",
-      createInput(order.customer_email, "email")
-    );
-
-    /* ORDER INFORMATION */
-
-    const sourceOptions = [
-      ["website", "Website"],
-      ["manual", "Manual"],
-      ["whatsapp", "WhatsApp"],
-      ["instagram", "Instagram"],
-      ["in_person", "In Person"]
-    ];
-
-    if (order.order_source && !sourceOptions.some(option => option[0] === order.order_source)) {
-      sourceOptions.push([order.order_source, order.order_source]);
-    }
-
-    const sourceSelect = createField(
-      "Order Source",
-      createSelect(sourceOptions, order.order_source)
-    );
-
-    const orderStatusSelect = createField(
-      "Order Status",
-      createSelect([
-        ["pending", "Pending"],
-        ["confirmed", "Confirmed"],
-        ["processing", "Processing"],
-        ["ready", "Ready"],
-        ["delivered", "Delivered"],
-        ["cancelled", "Cancelled"]
-      ], order.order_status)
-    );
-
-    const paymentStatusSelect = createField(
-      "Payment Status",
-      createSelect([
-        ["pending", "Pending / Unpaid"],
-        ["partial", "Partially Paid"],
-        ["paid", "Paid"],
-        ["refunded", "Refunded"]
-      ], order.payment_status)
-    );
-
-    const paymentMethodInput = createField(
-      "Payment Method",
-      createInput(order.payment_method)
-    );
-
-    const deliveryFeeInput = createField(
-      "Delivery Fee (JMD)",
-      createInput(order.delivery_fee ?? 0, "number")
-    );
-    deliveryFeeInput.min = "0";
-    deliveryFeeInput.step = "0.01";
-
-    const notesInput = document.createElement("textarea");
-    notesInput.value = order.notes ?? "";
-    notesInput.rows = 3;
-
-    const notesField = createField("Order Notes", notesInput);
-
-    /* EDIT BOOKS AND QUANTITIES */
-
-    const booksHeading = document.createElement("h4");
-    booksHeading.textContent = "Edit Books in This Order";
-    editSection.appendChild(booksHeading);
-
-    const booksContainer = document.createElement("div");
-    editSection.appendChild(booksContainer);
-
-    function createBookRow(existingItem = null) {
-      const row = document.createElement("div");
-      row.style.display = "flex";
-      row.style.flexWrap = "wrap";
-      row.style.gap = "8px";
-      row.style.marginBottom = "12px";
-      row.style.alignItems = "center";
-
-      const productSelect = document.createElement("select");
-      productSelect.className = "field";
-      productSelect.style.flex = "2";
-      productSelect.style.minWidth = "180px";
-
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.textContent = "Choose a book...";
-      productSelect.appendChild(placeholder);
-
-      (availableProducts || []).forEach(product => {
-        const option = document.createElement("option");
-        option.value = product.id;
-        option.textContent =
-          `${product.name} — ${money(product.price_jmd)}`;
-        productSelect.appendChild(option);
-      });
-
-      if (existingItem && existingItem.product_id) {
-        productSelect.value = existingItem.product_id;
-      }
-
-      const quantityInput = document.createElement("input");
-      quantityInput.type = "number";
-      quantityInput.min = "1";
-      quantityInput.step = "1";
-      quantityInput.value = existingItem ? existingItem.quantity : 1;
-      quantityInput.className = "field";
-      quantityInput.style.width = "85px";
-
-      const removeButton = document.createElement("button");
-      removeButton.type = "button";
-      removeButton.textContent = "Remove";
-      removeButton.className = "secondary-btn";
-
-      removeButton.addEventListener("click", () => {
-        row.remove();
-      });
-
-      row.append(productSelect, quantityInput, removeButton);
-      booksContainer.appendChild(row);
-
-      return row;
-    }
-
-    if (items && items.length) {
-      items.forEach(item => createBookRow(item));
-    } else {
-      createBookRow();
-    }
-
-    const addBookButton = document.createElement("button");
-    addBookButton.type = "button";
-    addBookButton.className = "secondary-btn";
-    addBookButton.style.marginBottom = "18px";
-    addBookButton.textContent = "+ Add Another Book";
-
-    addBookButton.addEventListener("click", () => {
-      createBookRow();
-    });
-
-    editSection.appendChild(addBookButton);
-
-    /* SAVE EDITED ORDER */
-
-    const saveButton = document.createElement("button");
-    saveButton.type = "button";
-    saveButton.className = "primary-btn";
-    saveButton.style.display = "block";
-    saveButton.style.marginTop = "15px";
-    saveButton.textContent = "Save All Changes ♡";
-
-    editSection.appendChild(saveButton);
-
-    const message = document.createElement("p");
-    message.style.fontSize = "13px";
-    editSection.appendChild(message);
-
-    editButton.addEventListener("click", () => {
-      editSection.hidden = !editSection.hidden;
-      editButton.textContent = editSection.hidden
-        ? "✎ Edit Order"
-        : "Close Editor";
-    });
-
-    saveButton.addEventListener("click", async () => {
-      const bookRows = [...booksContainer.children];
-
-      if (!customerNameInput.value.trim()) {
-        message.style.color = "#a34c62";
-        message.textContent = "Please enter the customer's name.";
-        return;
-      }
-
-      if (!bookRows.length) {
-        message.style.color = "#a34c62";
-        message.textContent = "Please add at least one book.";
-        return;
-      }
-
-      const editedItems = [];
-
-      for (const row of bookRows) {
-        const productSelect = row.querySelector("select");
-        const quantityInput = row.querySelector("input");
-
-        const productId = productSelect.value;
-        const quantity = Number(quantityInput.value);
-
-        if (!productId || !Number.isInteger(quantity) || quantity <= 0) {
-          message.style.color = "#a34c62";
-          message.textContent =
-            "Please choose a book and enter a valid quantity for every row.";
-          return;
-        }
-
-        editedItems.push({
-          product_id: productId,
-          quantity: quantity
-        });
-      }
-
-      const deliveryFee = Number(deliveryFeeInput.value);
-
-      if (!Number.isFinite(deliveryFee) || deliveryFee < 0) {
-        message.style.color = "#a34c62";
-        message.textContent = "Please enter a valid delivery fee.";
-        return;
-      }
-
-      saveButton.disabled = true;
-      saveButton.textContent = "Saving...";
-      message.textContent = "";
-
-      try {
-        const { error: updateError } = await supabaseClient.rpc(
-          "update_manual_order",
-          {
-            p_order_id: order.id,
-            p_customer_name: customerNameInput.value.trim(),
-            p_customer_phone: customerPhoneInput.value.trim(),
-            p_customer_email: customerEmailInput.value.trim(),
-            p_order_source: sourceSelect.value,
-            p_order_status: orderStatusSelect.value,
-            p_payment_status: paymentStatusSelect.value,
-            p_payment_method: paymentMethodInput.value.trim(),
-            p_delivery_fee: deliveryFee,
-            p_notes: notesInput.value.trim(),
-            p_items: editedItems
-          }
-        );
-
-        if (updateError) throw updateError;
-
-        message.style.color = "#668568";
-        message.textContent = "Order updated successfully! ♡";
-
-        await loadDashboard();
-
-        document.getElementById("searchOrderButton").click();
-
-      } catch (error) {
-        message.style.color = "#a34c62";
-        message.textContent = "Could not update: " + error.message;
-
-      } finally {
-        saveButton.disabled = false;
-        saveButton.textContent = "Save All Changes ♡";
-      }
-    });
-
-  } catch (error) {
-    results.textContent = "Search failed: " + error.message;
-  }
-});
-
-     } catch (error) {
-            showError(
-              dashboardMessage,
-              "Could not load dashboard: " + (error.message || "Please try again.")
-            );
-          }
-        }
-
-
-    /* SEARCH WHEN ENTER IS PRESSED */
-    
-    document.getElementById("orderSearch").addEventListener("keydown", event => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        document.getElementById("searchOrderButton").click();
-      }
-    });
-
-  
-/* ORDER FORM FUNCTIONS */
-
-function formatOrderMoney(value) {
-  return money(value);
-}
-
-function addOrderItem() {
-  const container = document.getElementById("orderItems");
-
-  const row = document.createElement("div");
-  row.className = "order-item";
-
-  const productSelect = document.createElement("select");
-  productSelect.className = "item-product";
-  productSelect.required = true;
-
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = "Choose a book";
-  productSelect.appendChild(placeholder);
-
-  availableProducts.forEach(product => {
-    const option = document.createElement("option");
-    option.value = product.id;
-    option.textContent = product.name;
-    productSelect.appendChild(option);
-  });
-
-  const price = document.createElement("input");
-  price.className = "item-price";
-  price.type = "text";
-  price.readOnly = true;
-  price.placeholder = "Price";
-
-  const quantity = document.createElement("input");
-  quantity.className = "item-quantity";
-  quantity.type = "number";
-  quantity.min = "1";
-  quantity.step = "1";
-  quantity.value = "1";
-  quantity.required = true;
-  quantity.setAttribute("aria-label", "Quantity");
-
-  const removeButton = document.createElement("button");
-  removeButton.type = "button";
-  removeButton.className = "remove-item";
-  removeButton.textContent = "×";
-  removeButton.title = "Remove book";
-  removeButton.setAttribute("aria-label", "Remove book");
-
-  productSelect.addEventListener("change", () => {
-    const product = availableProducts.find(
-      item => item.id === productSelect.value
-    );
-
-    price.value = product ? formatOrderMoney(product.price_jmd) : "";
-    calculateOrderTotal();
-  });
-
-  quantity.addEventListener("input", calculateOrderTotal);
-
-  removeButton.addEventListener("click", () => {
-    row.remove();
-
-    if (!container.children.length) {
-      addOrderItem();
-    }
-
-    calculateOrderTotal();
-  });
-
-  row.append(productSelect, price, quantity, removeButton);
-  container.appendChild(row);
-
-  calculateOrderTotal();
-}
-
-function calculateOrderTotal() {
-  let subtotal = 0;
-
-  document.querySelectorAll(".order-item").forEach(row => {
-    const productId = row.querySelector(".item-product").value;
-    const quantity = Number(row.querySelector(".item-quantity").value);
-
-    const product = availableProducts.find(
-      item => item.id === productId
-    );
-
-    if (product && Number.isInteger(quantity) && quantity > 0) {
-      subtotal += Number(product.price_jmd) * quantity;
-    }
-  });
-
-  const delivery = Math.max(
-    0,
-    Number(document.getElementById("deliveryFee").value) || 0
-  );
-
-  document.getElementById("orderSubtotal").textContent = money(subtotal);
-  document.getElementById("orderDelivery").textContent = money(delivery);
-  document.getElementById("orderTotal").textContent = money(subtotal + delivery);
-}
-
-document.getElementById("addItemButton").addEventListener("click", addOrderItem);
-
-document.getElementById("deliveryFee").addEventListener(
-  "input",
-  calculateOrderTotal
+<script>
+const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
 );
 
-/* CREATE AND SAVE ORDER */
+const loginScreen = document.getElementById("loginScreen");
+const dashboard = document.getElementById("dashboard");
+const loginMessage = document.getElementById("loginMessage");
+const dashboardMessage = document.getElementById("dashboardMessage");
 
-document.getElementById("orderForm").addEventListener("submit", async event => {
-  event.preventDefault();
+function money(value){
+  return new Intl.NumberFormat("en-JM",{
+    style:"currency",
+    currency:"JMD",
+    maximumFractionDigits:2
+  }).format(Number(value||0));
+}
 
-  const button = document.getElementById("createOrderButton");
-  const message = document.getElementById("orderMessage");
+function showDashboard(){
+  loginScreen.style.display="none";
+  dashboard.style.display="block";
+}
 
-  message.textContent = "";
+function showLogin(){
+  dashboard.style.display="none";
+  loginScreen.style.display="flex";
+}
 
-  const items = [];
-  let invalidItem = false;
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("show");
+}
 
-  document.querySelectorAll(".order-item").forEach(row => {
-    const productId = row.querySelector(".item-product").value;
-    const quantity = Number(row.querySelector(".item-quantity").value);
+document.getElementById("menuToggle").addEventListener("click",toggleMenu);
+document.getElementById("sidebarOverlay").addEventListener("click",toggleMenu);
 
-    if (!productId || !Number.isInteger(quantity) || quantity < 1) {
-      invalidItem = true;
-      return;
+async function loadDashboard(){
+  const message=dashboardMessage;
+  message.style.color="#927d85";
+  message.textContent="Loading your business information...";
+
+  try{
+    const {data:orders,count:orderCount,error:ordersError}=await supabaseClient
+      .from("orders")
+      .select("id,invoice_number,customer_name,total,order_status,payment_status,created_at",{count:"exact"})
+      .order("created_at",{ascending:false})
+      .limit(5);
+
+    if(ordersError) throw ordersError;
+
+    const {count:pendingCount,error:pendingError}=await supabaseClient
+      .from("orders")
+      .select("id",{count:"exact",head:true})
+      .eq("order_status","pending");
+
+    if(pendingError) throw pendingError;
+
+    const {count:productCount,error:productsError}=await supabaseClient
+      .from("products")
+      .select("id",{count:"exact",head:true})
+      .eq("is_active",true);
+
+    if(productsError) throw productsError;
+
+    document.getElementById("totalOrders").textContent=orderCount??0;
+    document.getElementById("pendingOrders").textContent=pendingCount??0;
+    document.getElementById("totalProducts").textContent=productCount??0;
+
+    const table=document.getElementById("recentOrdersTable");
+    table.replaceChildren();
+
+    if(!orders||orders.length===0){
+      const row=table.insertRow();
+      const cell=row.insertCell();
+      cell.colSpan=5;
+      cell.className="empty";
+      cell.textContent="No orders have been received yet.";
+    }else{
+      orders.forEach(order=>{
+        const row=table.insertRow();
+
+        [order.invoice_number||"Not assigned",order.customer_name||"—",money(order.total)]
+          .forEach(value=>{
+            const cell=row.insertCell();
+            cell.textContent=value;
+          });
+
+        const statusCell=row.insertCell();
+        const status=document.createElement("span");
+        status.className="status";
+        status.textContent=order.order_status||"pending";
+        statusCell.appendChild(status);
+
+        const paymentCell=row.insertCell();
+        const payment=document.createElement("span");
+        payment.className="status";
+        payment.textContent=order.payment_status||"pending";
+        paymentCell.appendChild(payment);
+      });
     }
 
-    items.push({
-      product_id: productId,
-      quantity: quantity
+    message.textContent="";
+  }catch(error){
+    message.style.color="#a34c62";
+    message.textContent="Could not load dashboard: "+(error.message||"Please try again.");
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+
+  const button=document.getElementById("loginButton");
+  button.disabled=true;
+  button.textContent="Signing in...";
+  loginMessage.textContent="";
+
+  try{
+    const {error}=await supabaseClient.auth.signInWithPassword({
+      email:document.getElementById("email").value.trim(),
+      password:document.getElementById("password").value
     });
-  });
 
-  if (invalidItem || !items.length) {
-    message.textContent = "Please select a book and a valid quantity for every item.";
-    return;
-  }
+    if(error) throw error;
 
-  const deliveryFee = Number(
-    document.getElementById("deliveryFee").value
-  );
-
-  if (!Number.isFinite(deliveryFee) || deliveryFee < 0) {
-    message.textContent = "Please enter a valid delivery fee.";
-    return;
-  }
-
-  const orderDetails = {
-    p_customer_name: document.getElementById("customerName").value.trim(),
-    p_customer_phone: document.getElementById("customerPhone").value.trim() || null,
-    p_customer_email: document.getElementById("customerEmail").value.trim() || null,
-    p_order_source: document.getElementById("orderSource").value,
-    p_order_status: document.getElementById("orderStatus").value,
-    p_payment_status: document.getElementById("paymentStatus").value,
-    p_payment_method: document.getElementById("paymentMethod").value || null,
-    p_delivery_fee: deliveryFee,
-    p_notes: document.getElementById("orderNotes").value.trim() || null,
-    p_items: items
-  };
-
-  button.disabled = true;
-  button.textContent = "Creating Order...";
-
-  try {
-    const { data, error } = await supabaseClient.rpc(
-      "create_manual_order",
-      orderDetails
-    );
-
-    if (error) throw error;
-
-    const createdOrder = data[0];
-
-    message.style.color = "#668568";
-    message.textContent =
-      "Order created successfully! Order number: " +
-      createdOrder.invoice_number;
-
-    document.getElementById("orderForm").reset();
-    document.getElementById("orderItems").replaceChildren();
-
-    addOrderItem();
-    calculateOrderTotal();
-
+    showDashboard();
     await loadDashboard();
-
-  } catch (error) {
-    message.style.color = "#a34c62";
-    message.textContent =
-      "Could not create order: " + (error.message || "Please try again.");
-
-  } finally {
-    button.disabled = false;
-    button.textContent = "Create Order";
+  }catch(error){
+    loginMessage.textContent=error.message||"Unable to sign in.";
+  }finally{
+    button.disabled=false;
+    button.textContent="Sign In";
   }
 });
 
+document.getElementById("logoutButton").addEventListener("click",async()=>{
+  const {error}=await supabaseClient.auth.signOut();
 
-/* REFRESH */
-document.getElementById("refreshButton").addEventListener("click", loadDashboard);
+  if(error){
+    dashboardMessage.textContent="Could not log out: "+error.message;
+    return;
+  }
 
-/* LOG OUT */
-document.getElementById("logoutButton").addEventListener("click", async () => {
-  await supabaseClient.auth.signOut();
   showLogin();
 });
 
-/* CHECK EXISTING LOGIN */
-async function checkSession() {
-  const { data: { session } } = await supabaseClient.auth.getSession();
+document.getElementById("refreshButton").addEventListener("click",loadDashboard);
 
-  if (session) {
-    showDashboard();
-    await loadDashboard();
-  } else {
+async function checkSession(){
+  const {data,error}=await supabaseClient.auth.getSession();
+
+  if(error||!data.session){
     showLogin();
+    return;
   }
+
+  showDashboard();
+  await loadDashboard();
 }
 
 checkSession();
-      /* SIDEBAR PAGE NAVIGATION */
-
-document.querySelectorAll(".sidebar button[data-page]").forEach(button => {
-  button.addEventListener("click", () => {
-
-    document.querySelectorAll(".sidebar button[data-page]").forEach(item => {
-      item.classList.remove("active");
-    });
-
-    document.querySelectorAll(".admin-page").forEach(page => {
-      page.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
-    document.getElementById(button.dataset.page).classList.add("active");
-
-  });
-});
 </script>
 
 </body>
