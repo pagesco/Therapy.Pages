@@ -1,0 +1,469 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Therapy Pages | Recent Orders</title>
+<link rel="icon" type="image/png" href="ICON.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --pink:#d99ab2;
+  --deep-pink:#a85f7c;
+  --pale-pink:#faedf2;
+  --cream:#fffaf4;
+  --text:#57434b;
+  --muted:#927d85;
+  --border:#f0dfe6;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  color:var(--text);
+  background:var(--cream);
+}
+button,select { font:inherit; cursor:pointer; }
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 5%;
+  background:white;
+  border-bottom:1px solid var(--border);
+}
+.topbar h1 {
+  margin:0;
+  color:var(--deep-pink);
+  font:600 27px 'Playfair Display',serif;
+}
+.topbar small {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:2px;
+}
+.logout-btn,.refresh-btn,.nav-btn,.secondary-btn {
+  padding:10px 15px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--deep-pink);
+  background:var(--pale-pink);
+}
+main {
+  width:min(1150px,92%);
+  margin:35px auto;
+}
+h2 {
+  font:600 30px 'Playfair Display',serif;
+}
+.panel {
+  padding:22px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:0 5px 20px rgba(130,75,95,.04);
+}
+.panel-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.panel-heading h3 {
+  margin:0;
+  font:600 22px 'Playfair Display',serif;
+}
+.table-wrap { overflow-x:auto; }
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+  font-size:13px;
+}
+th,td {
+  padding:13px 12px;
+  text-align:left;
+  border-bottom:1px solid #f5eaf0;
+}
+th {
+  color:var(--muted);
+  font-weight:500;
+  background:#fffafd;
+}
+.field {
+  width:100%;
+  padding:9px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  background:white;
+}
+.secondary-btn { padding:8px 12px; }
+#message {
+  margin-top:15px;
+  font-size:13px;
+}
+#loginScreen {
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+.login-card {
+  width:100%;
+  max-width:420px;
+  padding:35px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:22px;
+  text-align:center;
+}
+.login-card h1 {
+  color:var(--deep-pink);
+  font:600 32px 'Playfair Display',serif;
+}
+.login-card input {
+  width:100%;
+  padding:13px;
+  margin:8px 0;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font:inherit;
+}
+.primary-btn {
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  border:0;
+  border-radius:10px;
+  color:white;
+  background:var(--deep-pink);
+  font-weight:600;
+}
+#loginMessage { color:#a34c62; font-size:13px; }
+#ordersPage { display:none; }
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  padding:25px;
+}
+@media(max-width:650px) {
+  .topbar { padding:15px 4%; }
+  .topbar h1 { font-size:22px; }
+  main { margin:22px auto; }
+  .panel { padding:15px; }
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginScreen">
+  <div class="login-card">
+    <h1>Therapy Pages ♡</h1>
+    <p>Administrator Login</p>
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="Administrator email" required>
+      <input id="password" type="password" placeholder="Password" required>
+      <button class="primary-btn" id="loginButton" type="submit">Sign In</button>
+    </form>
+    <div id="loginMessage"></div>
+  </div>
+</section>
+
+<section id="ordersPage">
+  <header class="topbar">
+    <div>
+      <h1>Therapy Pages ♡</h1>
+      <small>BUSINESS MANAGEMENT</small>
+    </div>
+    <button class="logout-btn" id="logoutButton">Log Out</button>
+  </header>
+
+  <main>
+    <div class="panel">
+      <div class="panel-heading">
+        <h3>Recent Orders</h3>
+        <button class="refresh-btn" id="refreshButton">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Order Status</th>
+              <th>Payment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable">
+            <tr><td colspan="6">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="message"></div>
+    </div>
+  </main>
+
+  <footer>Made with love ♡ Therapy Pages</footer>
+</section>
+
+<script>
+const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const loginScreen = document.getElementById("loginScreen");
+const ordersPage = document.getElementById("ordersPage");
+const message = document.getElementById("message");
+
+function showLogin() {
+  ordersPage.style.display = "none";
+  loginScreen.style.display = "flex";
+}
+
+function showOrders() {
+  loginScreen.style.display = "none";
+  ordersPage.style.display = "block";
+}
+
+function money(value) {
+  return new Intl.NumberFormat("en-JM", {
+    style:"currency",
+    currency:"JMD",
+    maximumFractionDigits:2
+  }).format(Number(value || 0));
+}
+
+function addCell(row,value) {
+  const cell = document.createElement("td");
+  cell.textContent = value ?? "—";
+  row.appendChild(cell);
+  return cell;
+}
+
+async function loadOrders() {
+  message.textContent = "Loading orders...";
+
+  try {
+    const { data: orders, error } = await supabaseClient
+      .from("orders")
+      .select("id, invoice_number, customer_name, total, order_status, payment_status, created_at")
+      .order("created_at", {ascending:false})
+      .limit(50);
+
+    if (error) throw error;
+
+    const table = document.getElementById("ordersTable");
+    table.replaceChildren();
+
+    if (!orders.length) {
+      const row = table.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 6;
+      cell.textContent = "No orders have been received yet.";
+      message.textContent = "";
+      return;
+    }
+
+    orders.forEach(order => {
+      const row = table.insertRow();
+
+      addCell(row,order.invoice_number || "Not assigned");
+      addCell(row,order.customer_name);
+      addCell(row,money(order.total));
+
+      const statusCell = addCell(row,"");
+      const statusSelect = document.createElement("select");
+      statusSelect.className = "field";
+
+      [
+        ["pending","Pending"],
+        ["confirmed","Confirmed"],
+        ["processing","Processing"],
+        ["ready","Ready"],
+        ["delivered","Delivered"],
+        ["cancelled","Cancelled"]
+      ].forEach(([value,label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        statusSelect.appendChild(option);
+      });
+
+      statusSelect.value = order.order_status || "pending";
+      statusSelect.addEventListener("change", () => {
+        updateOrderStatus(order.id,statusSelect.value,order.invoice_number,statusSelect);
+      });
+      statusCell.appendChild(statusSelect);
+
+      const paymentCell = addCell(row,"");
+      const paymentSelect = document.createElement("select");
+      paymentSelect.className = "field";
+
+      [
+        ["pending","Pending / Unpaid"],
+        ["partial","Partially Paid"],
+        ["paid","Paid"],
+        ["refunded","Refunded"]
+      ].forEach(([value,label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        paymentSelect.appendChild(option);
+      });
+
+      paymentSelect.value = order.payment_status || "pending";
+      paymentSelect.addEventListener("change", () => {
+        updatePaymentStatus(order.id,paymentSelect.value,order.invoice_number,paymentSelect);
+      });
+      paymentCell.appendChild(paymentSelect);
+
+      const actionsCell = addCell(row,"");
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "secondary-btn";
+      deleteButton.textContent = "Delete";
+      deleteButton.addEventListener("click", () => {
+        deleteOrder(order.id,order.invoice_number);
+      });
+      actionsCell.appendChild(deleteButton);
+    });
+
+    message.textContent = "";
+
+  } catch(error) {
+    message.textContent = "Could not load orders: " + error.message;
+  }
+}
+
+async function updateOrderStatus(orderId,newStatus,invoiceNumber,selectElement) {
+  selectElement.disabled = true;
+  message.textContent = "Updating order status...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("orders")
+      .update({order_status:newStatus})
+      .eq("id",orderId);
+
+    if (error) throw error;
+
+    message.textContent = "Order " + invoiceNumber + " updated successfully.";
+    await loadOrders();
+  } catch(error) {
+    message.textContent = "Could not update order: " + error.message;
+    selectElement.disabled = false;
+  }
+}
+
+async function updatePaymentStatus(orderId,newStatus,invoiceNumber,selectElement) {
+  selectElement.disabled = true;
+  message.textContent = "Updating payment status...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("orders")
+      .update({payment_status:newStatus})
+      .eq("id",orderId);
+
+    if (error) throw error;
+
+    message.textContent = "Payment status for order " + invoiceNumber + " updated successfully.";
+    await loadOrders();
+  } catch(error) {
+    message.textContent = "Could not update payment status: " + error.message;
+    selectElement.disabled = false;
+  }
+}
+
+async function deleteOrder(orderId,invoiceNumber) {
+  const confirmed = confirm(
+    "Are you sure you want to permanently delete order " +
+    invoiceNumber +
+    "?\n\nThis action cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  message.textContent = "Deleting order...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("orders")
+      .delete()
+      .eq("id",orderId);
+
+    if (error) throw error;
+
+    message.textContent = "Order " + invoiceNumber + " was deleted successfully.";
+    await loadOrders();
+  } catch(error) {
+    message.textContent = "Could not delete order: " + error.message;
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email:document.getElementById("email").value.trim(),
+      password:document.getElementById("password").value
+    });
+
+    if (error) throw error;
+
+    showOrders();
+    await loadOrders();
+
+  } catch(error) {
+    document.getElementById("loginMessage").textContent = error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+});
+
+document.getElementById("refreshButton").addEventListener("click",loadOrders);
+
+document.getElementById("logoutButton").addEventListener("click",async () => {
+  await supabaseClient.auth.signOut();
+  showLogin();
+});
+
+async function checkSession() {
+  const { data:{session}, error } = await supabaseClient.auth.getSession();
+
+  if (error || !session) {
+    showLogin();
+    return;
+  }
+
+  showOrders();
+  await loadOrders();
+}
+
+checkSession();
+</script>
+
+</body>
+</html>
