@@ -211,13 +211,20 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
         <span>Total Orders</span>
         <strong id="totalOrders">—</strong>
       </div>
+    
       <div class="stat-card">
         <span>Pending Orders</span>
         <strong id="pendingOrders">—</strong>
       </div>
+    
       <div class="stat-card">
         <span>Active Products</span>
         <strong id="totalProducts">—</strong>
+      </div>
+    
+      <div class="stat-card">
+        <span>Total Sales (Paid)</span>
+        <strong id="totalSales">J$0.00</strong>
       </div>
     </div>
 
@@ -330,6 +337,19 @@ async function loadDashboard(){
 
     if(productsError) throw productsError;
 
+      const {data:paidOrders,error:paidError}=await supabaseClient
+        .from("orders")
+        .select("total")
+        .eq("payment_status","paid");
+      
+      if(paidError) throw paidError;
+      
+      const totalSales=(paidOrders||[]).reduce((sum,order)=>{
+        return sum+Number(order.total||0);
+      },0);
+      
+      document.getElementById("totalSales").textContent=money(totalSales);
+
     document.getElementById("totalOrders").textContent=orderCount??0;
     document.getElementById("pendingOrders").textContent=pendingCount??0;
     document.getElementById("totalProducts").textContent=productCount??0;
@@ -366,7 +386,8 @@ async function loadDashboard(){
         paymentCell.appendChild(payment);
       });
     }
-
+  });
+ }
     message.textContent="";
   }catch(error){
     message.style.color="#a34c62";
