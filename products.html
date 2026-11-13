@@ -1,0 +1,404 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Therapy Pages | Products</title>
+<link rel="icon" type="image/png" href="ICON.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --pink:#d99ab2;
+  --deep-pink:#a85f7c;
+  --pale-pink:#faedf2;
+  --cream:#fffaf4;
+  --text:#57434b;
+  --muted:#927d85;
+  --border:#f0dfe6;
+}
+* {box-sizing:border-box;}
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  color:var(--text);
+  background:var(--cream);
+}
+button,input {font:inherit;}
+button {cursor:pointer;}
+
+#loginScreen {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+.login-card {
+  width:100%;
+  max-width:420px;
+  padding:42px 32px;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:white;
+  text-align:center;
+}
+.brand {
+  color:var(--deep-pink);
+  font:600 35px 'Playfair Display',serif;
+}
+.field {
+  width:100%;
+  padding:14px;
+  margin-bottom:14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+.primary-btn {
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:12px;
+  color:white;
+  background:var(--deep-pink);
+  font-weight:600;
+}
+#loginMessage {color:#a34c62;font-size:13px;}
+
+#dashboard {display:none;min-height:100vh;}
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:20px 5%;
+  background:white;
+  border-bottom:1px solid var(--border);
+}
+.topbar h1 {
+  margin:0;
+  color:var(--deep-pink);
+  font:600 27px 'Playfair Display',serif;
+}
+.topbar small {
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:2px;
+}
+.logout-btn,.refresh-btn,.secondary-btn {
+  padding:10px 15px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--deep-pink);
+  background:var(--pale-pink);
+}
+main {width:min(1150px,92%);margin:35px auto;}
+.welcome {margin-bottom:25px;}
+.welcome h2 {
+  margin:0 0 5px;
+  font:600 30px 'Playfair Display',serif;
+}
+.welcome p {margin:0;color:var(--muted);font-size:13px;}
+.panel {
+  padding:22px;
+  margin-bottom:22px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:0 5px 20px #824b5f0a;
+}
+.panel-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.panel h3 {margin:0;font:600 22px 'Playfair Display',serif;}
+.table-wrap {overflow-x:auto;}
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:500px;
+  font-size:13px;
+}
+th,td {
+  padding:14px 12px;
+  text-align:left;
+  border-bottom:1px solid #f5eaf0;
+}
+th {color:var(--muted);font-weight:500;background:#fffafd;}
+.empty {color:var(--muted);padding:20px 0;}
+#dashboardMessage {font-size:13px;margin-top:15px;}
+footer {text-align:center;color:var(--muted);font-size:11px;padding:25px;}
+
+.menu-toggle {
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:1001;
+  background:var(--deep-pink);
+  color:white;
+  border:none;
+  padding:12px 16px;
+  border-radius:8px;
+  font-size:18px;
+}
+.sidebar {
+  position:fixed;
+  top:0;
+  left:-270px;
+  width:250px;
+  height:100%;
+  background:white;
+  z-index:1002;
+  padding:75px 20px 20px;
+  box-shadow:2px 0 10px #0002;
+  transition:left .3s ease;
+}
+.sidebar.open {left:0;}
+.sidebar h2 {
+  font-family:'Playfair Display',serif;
+  color:var(--deep-pink);
+}
+.sidebar a {
+  display:block;
+  padding:14px;
+  margin-bottom:8px;
+  color:#6b5050;
+  text-decoration:none;
+  border-radius:8px;
+}
+.sidebar a:hover {background:var(--pale-pink);}
+.sidebar-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0005;
+  z-index:1000;
+}
+.sidebar-overlay.show {display:block;}
+
+@media(max-width:650px) {
+  .topbar {padding:75px 4% 15px;}
+  .topbar h1 {font-size:23px;}
+  .panel {padding:16px;}
+  .welcome h2 {font-size:25px;}
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginScreen">
+  <div class="login-card">
+    <h1 class="brand">Therapy Pages</h1>
+    <p>Welcome to your private business dashboard ♡</p>
+    <form id="loginForm">
+      <input class="field" id="email" type="email" placeholder="Administrator email" required>
+      <input class="field" id="password" type="password" placeholder="Password" required>
+      <button class="primary-btn" id="loginButton" type="submit">Sign In</button>
+    </form>
+    <div id="loginMessage"></div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+  <nav class="sidebar" id="sidebar">
+    <h2>Therapy Pages ♡</h2>
+    <a href="admin.html">Dashboard</a>
+    <a href="orders.html">Recent Orders</a>
+    <a href="products.html">Products</a>
+    <a href="create-order.html">Create New Order</a>
+    <a href="find-order.html">Find an Order</a>
+  </nav>
+
+  <header class="topbar">
+    <div>
+      <h1>Therapy Pages ♡</h1>
+      <small>BUSINESS MANAGEMENT</small>
+    </div>
+    <button class="logout-btn" id="logoutButton">Log Out</button>
+  </header>
+
+  <main>
+    <div class="welcome">
+      <h2>Your Products ♡</h2>
+      <p>View your books, prices and stock information.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-heading">
+        <h3>Product List</h3>
+        <button class="refresh-btn" id="refreshButton">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="productsTable">
+            <tr><td colspan="4" class="empty">Loading products...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="dashboardMessage"></div>
+    </div>
+  </main>
+
+  <footer>Made with love ♡ Therapy Pages</footer>
+</section>
+
+<script>
+const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const loginScreen = document.getElementById("loginScreen");
+const dashboard = document.getElementById("dashboard");
+const loginMessage = document.getElementById("loginMessage");
+const dashboardMessage = document.getElementById("dashboardMessage");
+
+function showDashboard() {
+  loginScreen.style.display = "none";
+  dashboard.style.display = "block";
+}
+
+function showLogin() {
+  dashboard.style.display = "none";
+  loginScreen.style.display = "flex";
+}
+
+function money(value) {
+  return new Intl.NumberFormat("en-JM", {
+    style:"currency",
+    currency:"JMD",
+    maximumFractionDigits:2
+  }).format(Number(value || 0));
+}
+
+function toggleMenu() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("show");
+}
+
+async function loadProducts() {
+  const table = document.getElementById("productsTable");
+  dashboardMessage.textContent = "Loading products...";
+
+  try {
+    const { data: products, error } = await supabaseClient
+      .from("products")
+      .select("id, name, price_jmd, stock_quantity, track_inventory, is_active")
+      .order("name");
+
+    if (error) throw error;
+
+    table.replaceChildren();
+
+    if (!products || !products.length) {
+      const row = table.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 4;
+      cell.className = "empty";
+      cell.textContent = "No products found.";
+    } else {
+      products.forEach(product => {
+        const row = table.insertRow();
+
+        function addCell(value) {
+          const cell = row.insertCell();
+          cell.textContent = value ?? "—";
+        }
+
+        addCell(product.name);
+        addCell(money(product.price_jmd));
+        addCell(
+          product.track_inventory === false
+            ? "Not tracked"
+            : product.stock_quantity
+        );
+        addCell(product.is_active ? "Active" : "Inactive");
+      });
+    }
+
+    dashboardMessage.textContent = "";
+
+  } catch (error) {
+    dashboardMessage.textContent =
+      "Could not load products: " + (error.message || "Please try again.");
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+  button.textContent = "Signing in...";
+  loginMessage.textContent = "";
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value
+    });
+
+    if (error) throw error;
+
+    showDashboard();
+    await loadProducts();
+
+  } catch (error) {
+    loginMessage.textContent = error.message || "Unable to sign in.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+});
+
+document.getElementById("refreshButton").addEventListener("click", loadProducts);
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+  showLogin();
+});
+
+async function checkSession() {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    loginMessage.textContent = error.message;
+    showLogin();
+    return;
+  }
+
+  if (session) {
+    showDashboard();
+    await loadProducts();
+  } else {
+    showLogin();
+  }
+}
+
+checkSession();
+</script>
+
+</body>
+</html>
