@@ -1418,15 +1418,23 @@ async function loadDashboard() {
   }
 });
 
-/* SEARCH WHEN ENTER IS PRESSED */
+     } catch (error) {
+            showError(
+              dashboardMessage,
+              "Could not load dashboard: " + (error.message || "Please try again.")
+            );
+          }
+        }
 
-document.getElementById("orderSearch").addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    document.getElementById("searchOrderButton").click();
-  }
-});
 
+    /* SEARCH WHEN ENTER IS PRESSED */
+    
+    document.getElementById("orderSearch").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("searchOrderButton").click();
+      }
+    });
 
   
 /* ORDER FORM FUNCTIONS */
