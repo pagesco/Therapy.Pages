@@ -421,6 +421,82 @@ footer {
     padding: 16px;
   }
 }
+
+/* ADMIN SIDEBAR NAVIGATION */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid var(--border);
+  padding: 25px 16px;
+}
+
+.sidebar h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--deep-pink);
+  margin: 0 0 25px;
+}
+
+.sidebar button {
+  display: block;
+  width: 100%;
+  padding: 13px 15px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.sidebar button.active,
+.sidebar button:hover {
+  background: var(--pale-pink);
+  color: var(--deep-pink);
+}
+
+.admin-content {
+  flex: 1;
+  min-width: 0;
+  padding: 25px;
+}
+
+.admin-page {
+  display: none;
+}
+
+.admin-page.active {
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar button {
+    display: inline-block;
+    width: auto;
+    margin-right: 5px;
+  }
+
+  .admin-content {
+    padding: 16px;
+  }
+}
 </style>
 </head>
 
@@ -448,6 +524,33 @@ footer {
 </section>
 
 <section id="dashboard">
+  <div class="admin-layout">
+
+  <aside class="sidebar">
+    <h2>Therapy Pages ♡</h2>
+
+    <button type="button" class="active" data-page="overviewPage">
+      Dashboard
+    </button>
+
+    <button type="button" data-page="ordersPage">
+      Recent Orders
+    </button>
+
+    <button type="button" data-page="productsPage">
+      Products
+    </button>
+
+    <button type="button" data-page="createOrderPage">
+      Create New Order
+    </button>
+
+    <button type="button" data-page="findOrderPage">
+      Find an Order
+    </button>
+  </aside>
+
+  <div class="admin-content">
   <header class="topbar">
     <div>
       <h1>Therapy Pages ♡</h1>
@@ -457,10 +560,12 @@ footer {
   </header>
 
   <main>
-    <div class="welcome">
-      <h2>Welcome back!</h2>
-      <p>Here's what's happening with your business.</p>
-    </div>
+    <section class="admin-page active" id="overviewPage">
+      <div class="welcome">
+        <h2>Welcome back!</h2>
+        <p>Here's what's happening with your business.</p>
+      </div>
+    </section>
 
     <div class="stats">
       <div class="stat-card">
@@ -479,40 +584,40 @@ footer {
       </div>
     </div>
 
-    
-<div class="panel">
-  <div class="panel-heading">
-    <h3>Create a New Order ♡</h3>
-  </div>
-
-  <form id="orderForm">
-    <div class="order-grid">
-
-      <div class="order-field">
-        <label for="customerName">Customer Name *</label>
-        <input id="customerName" required placeholder="Customer's full name">
-      </div>
-
-      <div class="order-field">
-        <label for="customerPhone">Phone Number</label>
-        <input id="customerPhone" type="tel" placeholder="Customer's phone">
-      </div>
-
-      <div class="order-field">
-        <label for="customerEmail">Email Address</label>
-        <input id="customerEmail" type="email" placeholder="Customer's email">
-      </div>
-
-      <div class="order-field">
-        <label for="orderSource">Where did the order come from?</label>
-        <select id="orderSource">
-          <option value="whatsapp">WhatsApp</option>
-          <option value="instagram">Instagram</option>
-          <option value="manual">Other / Manual</option>
-          <option value="in_person">In Person</option>
-          <option value="website">Website</option>
-        </select>
-      </div>
+    <section class="admin-page" id="createOrderPage">
+  <div class="panel">
+    <div class="panel-heading">
+      <h3>Create a New Order ♡</h3>
+    </div>
+  
+    <form id="orderForm">
+      <div class="order-grid">
+  
+        <div class="order-field">
+          <label for="customerName">Customer Name *</label>
+          <input id="customerName" required placeholder="Customer's full name">
+        </div>
+  
+        <div class="order-field">
+          <label for="customerPhone">Phone Number</label>
+          <input id="customerPhone" type="tel" placeholder="Customer's phone">
+        </div>
+  
+        <div class="order-field">
+          <label for="customerEmail">Email Address</label>
+          <input id="customerEmail" type="email" placeholder="Customer's email">
+        </div>
+  
+        <div class="order-field">
+          <label for="orderSource">Where did the order come from?</label>
+          <select id="orderSource">
+            <option value="whatsapp">WhatsApp</option>
+            <option value="instagram">Instagram</option>
+            <option value="manual">Other / Manual</option>
+            <option value="in_person">In Person</option>
+            <option value="website">Website</option>
+          </select>
+        </div>
 
       <div class="order-field">
         <label for="paymentMethod">Payment Method</label>
@@ -549,7 +654,6 @@ footer {
         <label for="deliveryFee">Delivery Fee (JMD)</label>
         <input id="deliveryFee" type="number" min="0" step="0.01" value="0">
       </div>
-
     </div>
 
     <div class="order-items">
@@ -566,24 +670,26 @@ footer {
         placeholder="Additional details about this order..."></textarea>
     </div>
 
-    <div class="order-total">
-      <p>Subtotal: <strong id="orderSubtotal">J$0.00</strong></p>
-      <p>Delivery: <strong id="orderDelivery">J$0.00</strong></p>
-      <p>Total: <strong id="orderTotal">J$0.00</strong></p>
-    </div>
-
-    <button type="submit" class="primary-btn" id="createOrderButton">
-      Create Order
-    </button>
-
-    <div id="orderMessage" role="status" aria-live="polite"></div>
-  </form>
-</div>
-    
-    <div class="panel">
-      <div class="panel-heading">
-        <h3>Find an Order ♡</h3>
+      <div class="order-total">
+        <p>Subtotal: <strong id="orderSubtotal">J$0.00</strong></p>
+        <p>Delivery: <strong id="orderDelivery">J$0.00</strong></p>
+        <p>Total: <strong id="orderTotal">J$0.00</strong></p>
       </div>
+  
+      <button type="submit" class="primary-btn" id="createOrderButton">
+        Create Order
+      </button>
+  
+      <div id="orderMessage" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+    <section class="admin-page" id="findOrderPage">
+      <div class="panel">
+        <div class="panel-heading">
+          <h3>Find an Order ♡</h3>
+        </div>
     
       <div class="order-grid">
         <div class="order-field">
@@ -605,8 +711,9 @@ footer {
     
       <div id="orderSearchResults" style="margin-top:18px;"></div>
     </div>
+  </section>
 
-
+<section class="admin-page" id="ordersPage">
     <div class="panel">
       <div class="panel-heading">
         <h3>Recent Orders</h3>
@@ -632,12 +739,15 @@ footer {
       </div>
       <div id="dashboardMessage" role="status"></div>
     </div>
+  </section>
 
-    <div class="panel">
-      <div class="panel-heading">
-        <h3>Your Products</h3>
-      </div>
-
+    <section class="admin-page" id="productsPage">
+      <div class="panel">
+        <div class="panel-heading">
+          <h3>Your Products</h3>
+        </div>
+    </section>
+    
       <div class="table-wrap">
         <table>
           <thead>
@@ -1663,6 +1773,25 @@ async function checkSession() {
 }
 
 checkSession();
+      /* SIDEBAR PAGE NAVIGATION */
+
+document.querySelectorAll(".sidebar button[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+
+    document.querySelectorAll(".sidebar button[data-page]").forEach(item => {
+      item.classList.remove("active");
+    });
+
+    document.querySelectorAll(".admin-page").forEach(page => {
+      page.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    document.getElementById(button.dataset.page).classList.add("active");
+
+  });
+});
 </script>
 
 </body>
