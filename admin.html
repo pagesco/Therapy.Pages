@@ -294,6 +294,25 @@ function money(value){
 function showDashboard(){
   loginScreen.style.display="none";
   dashboard.style.display="block";
+
+  if(window.ordersRealtimeChannel){
+    supabaseClient.removeChannel(window.ordersRealtimeChannel);
+  }
+
+  window.ordersRealtimeChannel=supabaseClient
+    .channel("dashboard-orders")
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"orders"
+      },
+      ()=>{
+        loadDashboard();
+      }
+    )
+    .subscribe();
 }
 
 function showLogin(){
