@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Therapy Pages | Find an Order</title>
+<link rel="icon" type="image/png" href="ICON.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#faf7f5;color:#39312f;font-family:'Poppins',sans-serif}
+.menu-toggle{position:fixed;top:18px;left:18px;z-index:1002;background:#745b55;color:white;border:0;border-radius:8px;padding:11px 15px;font-size:20px;cursor:pointer}
+.sidebar{position:fixed;top:0;left:-280px;width:270px;height:100vh;background:#493b37;color:white;z-index:1001;padding:80px 22px 25px;transition:left .3s;box-shadow:4px 0 18px #0002}
+.sidebar.open{left:0}
+.sidebar h2{font-family:'Playfair Display',serif;margin:0 0 25px}
+.sidebar a{display:block;color:white;text-decoration:none;padding:13px 15px;border-radius:8px;margin:6px 0;font-size:14px}
+.sidebar a:hover,.sidebar a.active{background:#80675f}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:#0006;z-index:1000}
+.sidebar-overlay.show{display:block}
+header{background:#fff;padding:25px 5% 25px 75px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #00000008}
+header h1{font-family:'Playfair Display',serif;font-size:27px;margin:0;color:#594640}
+header small{letter-spacing:2px;color:#9b8178;font-size:10px}
+.logout-btn{border:1px solid #b9a39b;background:white;color:#594640;padding:10px 17px;border-radius:7px;cursor:pointer}
+main{max-width:1050px;margin:35px auto;padding:0 20px 50px}
+h2{font-family:'Playfair Display',serif;color:#594640}
+.panel{background:white;border-radius:13px;padding:25px;margin-bottom:22px;box-shadow:0 3px 18px #00000008}
+.panel h2{margin-top:0}
+.search-row{display:flex;gap:10px}
+.search-row input{flex:1;min-width:0}
+.field{display:flex;flex-direction:column;gap:7px}
+label{font-size:13px;font-weight:500;color:#66534d}
+input,select,textarea{width:100%;padding:12px;border:1px solid #e3d8d3;border-radius:7px;font-family:inherit;font-size:13px;background:#fff;color:#39312f}
+textarea{min-height:85px;resize:vertical}
+button{font-family:inherit}
+.primary-btn{background:#745b55;color:white;border:0;padding:12px 20px;border-radius:7px;cursor:pointer;font-weight:500}
+.secondary-btn{background:#f3ece9;color:#654f48;border:0;padding:10px 15px;border-radius:7px;cursor:pointer}
+.remove-btn{background:#fff0ee;color:#a3443b;border:0;padding:9px 12px;border-radius:6px;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
+.message{margin-top:14px;font-size:13px;white-space:pre-wrap}
+.success{color:#28784b}
+.error{color:#b33b32}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.field.full{grid-column:1/-1}
+.item-row{display:grid;grid-template-columns:minmax(0,2fr) 110px 100px 75px;gap:10px;align-items:end;padding:15px 0;border-bottom:1px solid #eee7e3}
+.item-row .field{min-width:0}
+.item-price{background:#f8f5f3}
+.totals{max-width:360px;margin:20px 0 0 auto}
+.total-line{display:flex;justify-content:space-between;padding:8px 0;font-size:14px}
+.total-line.grand{border-top:1px solid #e5d9d4;margin-top:8px;padding-top:15px;font-weight:700;font-size:18px;color:#594640}
+.order-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;font-size:13px}
+.summary-item{background:#faf7f5;padding:12px;border-radius:7px}
+.summary-item strong{display:block;color:#594640;margin-top:4px;overflow-wrap:anywhere}
+#dashboard{display:none}
+#loginScreen{max-width:420px;margin:100px auto;padding:30px;background:white;border-radius:13px;box-shadow:0 4px 22px #00000010}
+#loginScreen h2{text-align:center}
+#loginScreen .field{margin:15px 0}
+#loginButton{width:100%;margin-top:10px}
+#editSection{display:none}
+@media(max-width:650px){
+ header{padding:75px 20px 20px;align-items:flex-start;gap:12px}
+ header h1{font-size:23px}
+ .form-grid,.order-summary{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .search-row{flex-direction:column}
+ .item-row{grid-template-columns:1fr 1fr}
+ .item-row .product-field{grid-column:1/-1}
+ .totals{max-width:none}
+ .panel{padding:18px}
+}
+</style>
+</head>
+
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()" aria-label="Open menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <h2>Therapy Pages ♡</h2>
+  <a href="admin.html">Dashboard</a>
+  <a href="orders.html">Recent Orders</a>
+  <a href="products.html">Products</a>
+  <a href="create-order.html">Create New Order</a>
+  <a href="find-order.html" class="active">Find an Order</a>
+</nav>
+
+<div id="loginScreen">
+  <h2>Admin Login</h2>
+  <p style="text-align:center;font-size:13px;color:#88766f">Log in to manage your orders.</p>
+  <form id="loginForm">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" required>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" required>
+    </div>
+    <button class="primary-btn" id="loginButton" type="submit">Log In</button>
+    <div class="message error" id="loginMessage"></div>
+  </form>
+</div>
+
+<div id="dashboard">
+  <header>
+    <div>
+      <h1>Therapy Pages ♡</h1>
+      <small>FIND AN ORDER</small>
+    </div>
+    <button class="logout-btn" id="logoutButton">Log Out</button>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Find an Order</h2>
+      <p style="font-size:13px;color:#897a74">Enter the customer's order number to find and edit an order.</p>
+      <div class="search-row">
+        <input id="orderSearch" placeholder="e.g. TP-20261108-00001">
+        <button class="primary-btn" id="searchOrderButton">Search Order</button>
+      </div>
+      <div class="message" id="searchMessage"></div>
+    </section>
+
+    <section class="panel" id="orderDetailsSection" style="display:none">
+      <h2>Order Information</h2>
+      <div class="order-summary" id="orderSummary"></div>
+    </section>
+
+    <form id="editSection" class="panel">
+      <h2>Edit Order</h2>
+      <p style="font-size:13px;color:#897a74">Make your changes below and save the updated order.</p>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="customerName">Customer Name *</label>
+          <input id="customerName" required>
+        </div>
+        <div class="field">
+          <label for="customerPhone">Phone Number</label>
+          <input id="customerPhone" type="tel">
+        </div>
+        <div class="field">
+          <label for="customerEmail">Email Address</label>
+          <input id="customerEmail" type="email">
+        </div>
+        <div class="field">
+          <label for="orderSource">Order Source</label>
+          <select id="orderSource">
+            <option value="whatsapp">WhatsApp</option>
+            <option value="instagram">Instagram</option>
+            <option value="manual">Manual</option>
+            <option value="in_person">In Person</option>
+            <option value="website">Website</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="orderStatus">Order Status</label>
+          <select id="orderStatus">
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="paymentStatus">Payment Status</label>
+          <select id="paymentStatus">
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="partially_paid">Partially Paid</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="paymentMethod">Payment Method</label>
+          <select id="paymentMethod">
+            <option value="cash">Cash</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="lynk">Lynk</option>
+            <option value="card">Card</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="deliveryFee">Delivery Fee (JMD)</label>
+          <input type="number" id="deliveryFee" min="0" step="0.01" value="0">
+        </div>
+        <div class="field full">
+          <label for="orderNotes">Order Notes</label>
+          <textarea id="orderNotes"></textarea>
+        </div>
+      </div>
+
+      <hr style="border:0;border-top:1px solid #eee7e3;margin:25px 0">
+
+      <h2>Order Items</h2>
+      <div id="orderItems"></div>
+      <button type="button" class="secondary-btn" id="addItemButton">+ Add Another Book</button>
+
+      <div class="totals">
+        <div class="total-line">
+          <span>Subtotal</span>
+          <strong id="subtotalDisplay">JMD $0.00</strong>
+        </div>
+        <div class="total-line grand">
+          <span>Total</span>
+          <strong id="totalDisplay">JMD $0.00</strong>
+        </div>
+      </div>
+
+      <div style="margin-top:25px">
+        <button type="submit" class="primary-btn" id="saveOrderButton">Save Changes</button>
+        <div class="message" id="saveMessage"></div>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script>
+const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+let availableProducts=[];
+let currentOrder=null;
+
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("show");
+}
+
+function money(amount){
+  return "JMD $"+Number(amount||0).toLocaleString("en-JM",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[char]);
+}
+
+function showLogin(){
+  document.getElementById("loginScreen").style.display="block";
+  document.getElementById("dashboard").style.display="none";
+}
+
+function showDashboard(){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+}
+
+async function loadProducts(){
+  const {data,error}=await supabaseClient
+    .from("products")
+    .select("id,name,price_jmd,is_active")
+    .order("name");
+
+  if(error) throw new Error("Could not load products: "+error.message);
+  availableProducts=data||[];
+}
+
+async function checkSession(){
+  const {data,error}=await supabaseClient.auth.getSession();
+
+  if(error||!data.session){
+    showLogin();
+    return;
+  }
+
+  showDashboard();
+
+  try{
+    await loadProducts();
+  }catch(error){
+    document.getElementById("searchMessage").className="message error";
+    document.getElementById("searchMessage").textContent=error.message;
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+
+  const button=document.getElementById("loginButton");
+  const message=document.getElementById("loginMessage");
+
+  button.disabled=true;
+  button.textContent="Logging in...";
+  message.textContent="";
+
+  const {error}=await supabaseClient.auth.signInWithPassword({
+    email:document.getElementById("email").value.trim(),
+    password:document.getElementById("password").value
+  });
+
+  button.disabled=false;
+  button.textContent="Log In";
+
+  if(error){
+    message.textContent=error.message;
+    return;
+  }
+
+  await checkSession();
+});
+
+document.getElementById("logoutButton").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  showLogin();
+});
+
+async function searchOrder(){
+  const orderNumber=document.getElementById("orderSearch").value.trim();
+  const message=document.getElementById("searchMessage");
+
+  message.className="message";
+  message.textContent="";
+  document.getElementById("orderDetailsSection").style.display="none";
+  document.getElementById("editSection").style.display="none";
+  currentOrder=null;
+
+  if(!orderNumber){
+    message.className="message error";
+    message.textContent="Please enter an order number.";
+    return;
+  }
+
+  const button=document.getElementById("searchOrderButton");
+  button.disabled=true;
+  button.textContent="Searching...";
+
+  try{
+    const {data:order,error:orderError}=await supabaseClient
+      .from("orders")
+      .select("*")
+      .eq("invoice_number",orderNumber)
+      .maybeSingle();
+
+    if(orderError) throw orderError;
+
+    if(!order){
+      message.className="message error";
+      message.textContent="No order was found with that order number. Please check it and try again.";
+      return;
+    }
+
+    const {data:items,error:itemsError}=await supabaseClient
+      .from("order_items")
+      .select("product_id,product_name,unit_price,quantity,line_total")
+      .eq("order_id",order.id);
+
+    if(itemsError) throw itemsError;
+
+    currentOrder=order;
+    displayOrder(order,items||[]);
+
+    message.className="message success";
+    message.textContent="Order found successfully.";
+  }catch(error){
+    message.className="message error";
+    message.textContent="Could not search for this order: "+error.message;
+  }finally{
+    button.disabled=false;
+    button.textContent="Search Order";
+  }
+}
+
+function displayOrder(order,items){
+  const summary=document.getElementById("orderSummary");
+
+  const details=[
+    ["Order Number",order.invoice_number],
+    ["Customer",order.customer_name],
+    ["Phone",order.customer_phone],
+    ["Email",order.customer_email],
+    ["Order Source",order.order_source],
+    ["Date",order.created_at ? new Date(order.created_at).toLocaleString() : ""],
+    ["Subtotal",money(order.subtotal)],
+    ["Delivery Fee",money(order.delivery_fee)],
+    ["Total",money(order.total)],
+    ["Order Status",order.order_status],
+    ["Payment Status",order.payment_status],
+    ["Payment Method",order.payment_method],
+    ["Notes",order.notes]
+  ];
+
+  summary.innerHTML=details.map(([label,value])=>`
+    <div class="summary-item">
+      ${escapeHTML(label)}
+      <strong>${escapeHTML(value??"—")}</strong>
+    </div>
+  `).join("");
+
+  document.getElementById("orderDetailsSection").style.display="block";
+
+  document.getElementById("customerName").value=order.customer_name||"";
+  document.getElementById("customerPhone").value=order.customer_phone||"";
+  document.getElementById("customerEmail").value=order.customer_email||"";
+  document.getElementById("orderSource").value=order.order_source||"manual";
+  document.getElementById("orderStatus").value=order.order_status||"pending";
+  document.getElementById("paymentStatus").value=order.payment_status||"pending";
+  document.getElementById("paymentMethod").value=order.payment_method||"cash";
+  document.getElementById("deliveryFee").value=Number(order.delivery_fee||0);
+  document.getElementById("orderNotes").value=order.notes||"";
+
+  const container=document.getElementById("orderItems");
+  container.innerHTML="";
+
+  items.forEach(item=>addOrderItem(item));
+  calculateTotals();
+
+  document.getElementById("editSection").style.display="block";
+}
+
+function addOrderItem(existingItem=null){
+  const container=document.getElementById("orderItems");
+  const row=document.createElement("div");
+  row.className="item-row";
+
+  const options=availableProducts.map(product=>{
+    const selected=existingItem && String(existingItem.product_id)===String(product.id) ? "selected" : "";
+    const inactive=product.is_active===false ? " (Inactive)" : "";
+    return `<option value="${escapeHTML(product.id)}" ${selected}>${escapeHTML(product.name)}${inactive} — ${money(product.price_jmd)}</option>`;
+  }).join("");
+
+  row.innerHTML=`
+    <div class="field product-field">
+      <label>Book / Product</label>
+      <select class="item-product" required>
+        <option value="">Choose a product</option>
+        ${options}
+      </select>
+    </div>
+    <div class="field">
+      <label>Price (JMD)</label>
+      <input class="item-price" readonly>
+    </div>
+    <div class="field">
+      <label>Quantity</label>
+      <input class="item-quantity" type="number" min="1" step="1" value="1" required>
+    </div>
+    <button type="button" class="remove-btn">Remove</button>
+  `;
+
+  const select=row.querySelector(".item-product");
+  const priceInput=row.querySelector(".item-price");
+  const quantityInput=row.querySelector(".item-quantity");
+
+  if(existingItem){
+    select.value=String(existingItem.product_id??"");
+    priceInput.value=Number(existingItem.unit_price||0).toFixed(2);
+    quantityInput.value=Number(existingItem.quantity||1);
+  }
+
+  select.addEventListener("change",()=>{
+    const product=availableProducts.find(p=>String(p.id)===select.value);
+    priceInput.value=product ? Number(product.price_jmd).toFixed(2) : "0.00";
+    calculateTotals();
+  });
+
+  quantityInput.addEventListener("input",calculateTotals);
+
+  row.querySelector(".remove-btn").addEventListener("click",()=>{
+    row.remove();
+    calculateTotals();
+  });
+
+  container.appendChild(row);
+}
+
+function calculateTotals(){
+  let subtotal=0;
+
+  document.querySelectorAll(".item-row").forEach(row=>{
+    const product=availableProducts.find(
+      p=>String(p.id)===row.querySelector(".item-product").value
+    );
+    const quantity=Number(row.querySelector(".item-quantity").value);
+
+    if(product && Number.isInteger(quantity) && quantity>0){
+      subtotal+=Number(product.price_jmd)*quantity;
+    }
+  });
+
+  const delivery=Math.max(0,Number(document.getElementById("deliveryFee").value)||0);
+
+  document.getElementById("subtotalDisplay").textContent=money(subtotal);
+  document.getElementById("totalDisplay").textContent=money(subtotal+delivery);
+}
+
+document.getElementById("searchOrderButton").addEventListener("click",searchOrder);
+
+document.getElementById("orderSearch").addEventListener("keydown",event=>{
+  if(event.key==="Enter"){
+    event.preventDefault();
+    searchOrder();
+  }
+});
+
+document.getElementById("addItemButton").addEventListener("click",()=>{
+  addOrderItem();
+  calculateTotals();
+});
+
+document.getElementById("deliveryFee").addEventListener("input",calculateTotals);
+
+document.getElementById("editSection").addEventListener("submit",async event=>{
+  event.preventDefault();
+
+  const message=document.getElementById("saveMessage");
+  const button=document.getElementById("saveOrderButton");
+
+  message.className="message";
+  message.textContent="";
+
+  if(!currentOrder){
+    message.className="message error";
+    message.textContent="Search for an order before saving changes.";
+    return;
+  }
+
+  const customerName=document.getElementById("customerName").value.trim();
+  const deliveryFee=Number(document.getElementById("deliveryFee").value);
+
+  if(!customerName){
+    message.className="message error";
+    message.textContent="Please enter the customer's name.";
+    return;
+  }
+
+  if(!Number.isFinite(deliveryFee)||deliveryFee<0){
+    message.className="message error";
+    message.textContent="Please enter a valid delivery fee.";
+    return;
+  }
+
+  const items=[];
+  let invalid=false;
+
+  document.querySelectorAll(".item-row").forEach(row=>{
+    const productId=row.querySelector(".item-product").value;
+    const quantity=Number(row.querySelector(".item-quantity").value);
+
+    if(!productId||!Number.isInteger(quantity)||quantity<1){
+      invalid=true;
+      return;
+    }
+
+    items.push({
+      product_id:productId,
+      quantity:quantity
+    });
+  });
+
+  if(invalid||items.length===0){
+    message.className="message error";
+    message.textContent="Please choose a product and enter a valid quantity for every item.";
+    return;
+  }
+
+  const updateDetails={
+    p_order_id:currentOrder.id,
+    p_customer_name:customerName,
+    p_customer_phone:document.getElementById("customerPhone").value.trim()||null,
+    p_customer_email:document.getElementById("customerEmail").value.trim()||null,
+    p_order_source:document.getElementById("orderSource").value,
+    p_order_status:document.getElementById("orderStatus").value,
+    p_payment_status:document.getElementById("paymentStatus").value,
+    p_payment_method:document.getElementById("paymentMethod").value,
+    p_delivery_fee:deliveryFee,
+    p_notes:document.getElementById("orderNotes").value.trim()||null,
+    p_items:items
+  };
+
+  button.disabled=true;
+  button.textContent="Saving Changes...";
+
+  try{
+    const {error}=await supabaseClient.rpc("update_manual_order",updateDetails);
+
+    if(error) throw error;
+
+    message.className="message success";
+    message.textContent="Order updated successfully!";
+
+    await searchOrder();
+  }catch(error){
+    message.className="message error";
+    message.textContent="Could not update order: "+error.message;
+  }finally{
+    button.disabled=false;
+    button.textContent="Save Changes";
+  }
+});
+
+checkSession();
+</script>
+</body>
+</html>
