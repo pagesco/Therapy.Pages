@@ -1961,6 +1961,51 @@ const products = [
 
 ];
 
+   /* CUSTOMER REVIEWS */
+
+      async function loadReviews() {
+        const reviewsList = document.getElementById("reviews-list");
+      
+        reviewsList.textContent = "Loading customer reviews...";
+      
+        const { data, error } = await supabaseClient
+          .from("reviews")
+          .select("customer_name, rating, review_text, created_at")
+          .eq("is_approved", true)
+          .order("created_at", { ascending: false });
+      
+        if (error) {
+          reviewsList.textContent = "Reviews could not be loaded. Please try again later.";
+          console.error("Reviews error:", error);
+          return;
+        }
+      
+        reviewsList.innerHTML = "";
+      
+        if (!data || data.length === 0) {
+          reviewsList.textContent = "Be the first to share your experience! 💗";
+          return;
+        }
+      
+        data.forEach(review => {
+          const card = document.createElement("div");
+          card.style.cssText = "background:white; padding:20px; margin:15px auto; max-width:650px; border-radius:15px; border:1px solid #f1d4e2;";
+      
+          const stars = document.createElement("div");
+          stars.textContent = "⭐".repeat(review.rating);
+      
+          const name = document.createElement("h3");
+          name.textContent = review.customer_name;
+      
+          const message = document.createElement("p");
+          message.textContent = review.review_text;
+      
+          card.append(stars, name, message);
+          reviewsList.appendChild(card);
+        });
+      }
+         
+
 /* =====================================
 
    3. SHOPPING BASKET
