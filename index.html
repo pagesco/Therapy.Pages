@@ -1694,6 +1694,43 @@ footer h2 {
           <h2>Customer Reviews 💗</h2>
           <p>See what our lovely customers are saying about Therapy Pages.</p>
         </div>
+
+      <div class="custom-form" style="margin-bottom:30px;">
+        <h3 style="color:#b83270; margin-bottom:20px;">
+          Share Your Experience 💕
+        </h3>
+      
+        <div class="form-group">
+          <label for="reviewName">Your Name</label>
+          <input type="text" id="reviewName" maxlength="80"
+            placeholder="Enter your name" required>
+        </div>
+      
+        <div class="form-group">
+          <label for="reviewRating">Your Rating</label>
+          <select id="reviewRating" required>
+            <option value="">Choose your rating</option>
+            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+            <option value="4">⭐⭐⭐⭐ Very Good</option>
+            <option value="3">⭐⭐⭐ Good</option>
+            <option value="2">⭐⭐ Fair</option>
+            <option value="1">⭐ Poor</option>
+          </select>
+        </div>
+      
+        <div class="form-group">
+          <label for="reviewText">Your Review</label>
+          <textarea id="reviewText" maxlength="1000"
+            placeholder="Tell us about your experience..."
+            required></textarea>
+        </div>
+      
+        <button class="btn" type="button" onclick="submitReview()">
+          Submit Review 💗
+        </button>
+      
+        <p id="reviewMessage" style="margin-top:12px;"></p>
+      </div>
       
         <div id="reviews-list">
           <p style="text-align:center;">Loading customer reviews...</p>
