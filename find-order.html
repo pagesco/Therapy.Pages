@@ -12,14 +12,69 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#faf7f5;color:#39312f;font-family:'Poppins',sans-serif}
-.menu-toggle{position:fixed;top:18px;left:18px;z-index:1002;background:#745b55;color:white;border:0;border-radius:8px;padding:11px 15px;font-size:20px;cursor:pointer}
-.sidebar{position:fixed;top:0;left:-280px;width:270px;height:100vh;background:#493b37;color:white;z-index:1001;padding:80px 22px 25px;transition:left .3s;box-shadow:4px 0 18px #0002}
-.sidebar.open{left:0}
-.sidebar h2{font-family:'Playfair Display',serif;margin:0 0 25px}
-.sidebar a{display:block;color:white;text-decoration:none;padding:13px 15px;border-radius:8px;margin:6px 0;font-size:14px}
-.sidebar a:hover,.sidebar a.active{background:#80675f}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:#0006;z-index:1000}
-.sidebar-overlay.show{display:block}
+.menu-toggle {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 1002;
+  background: #a85f7c;
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 15px;
+  font-size: 20px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 270px;
+  height: 100vh;
+  background: white;
+  z-index: 1001;
+  padding: 80px 18px 25px;
+  transition: left .3s;
+  box-shadow: 4px 0 20px #00000012;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar h2 {
+  font: 600 25px 'Playfair Display', serif;
+  color: #a85f7c;
+  margin: 0 0 25px;
+}
+
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: #57434b;
+  padding: 13px 15px;
+  border-radius: 10px;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: #faedf2;
+  color: #a85f7c;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #0006;
+  z-index: 1000;
+}
+
+.sidebar-overlay.show {
+  display: block;
+}
 header{background:#fff;padding:25px 5% 25px 75px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #00000008}
 header h1{font-family:'Playfair Display',serif;font-size:27px;margin:0;color:#594640}
 header small{letter-spacing:2px;color:#9b8178;font-size:10px}
