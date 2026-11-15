@@ -1,1 +1,678 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Therapy Pages | Customer Reviews</title>
+<link rel="icon" type="image/png" href="ICON.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --pink:#d99ab2;
+  --deep-pink:#a85f7c;
+  --pale-pink:#faedf2;
+  --cream:#fffaf4;
+  --text:#57434b;
+  --muted:#927d85;
+  --border:#f0dfe6;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  color:var(--text);
+  background:var(--cream);
+}
+
+button { font:inherit; cursor:pointer; }
+
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 5%;
+  background:white;
+  border-bottom:1px solid var(--border);
+}
+
+.topbar h1 {
+  margin:0;
+  color:var(--deep-pink);
+  font:600 27px 'Playfair Display',serif;
+}
+
+.topbar small {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+.logout-btn,.refresh-btn,.action-btn {
+  padding:10px 15px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--deep-pink);
+  background:var(--pale-pink);
+}
+
+main {
+  width:min(1150px,92%);
+  margin:35px auto;
+}
+
+h2 {
+  font:600 30px 'Playfair Display',serif;
+}
+
+.panel {
+  padding:22px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:0 5px 20px rgba(130,75,95,.04);
+}
+
+.panel-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.panel-heading h3 {
+  margin:0;
+  font:600 22px 'Playfair Display',serif;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:22px;
+}
+
+.stat-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:18px;
+}
+
+.stat-card span {
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.stat-card strong {
+  display:block;
+  margin-top:5px;
+  color:var(--deep-pink);
+  font-size:25px;
+}
+
+.table-wrap { overflow-x:auto; }
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+  font-size:13px;
+}
+
+th,td {
+  padding:13px 12px;
+  text-align:left;
+  vertical-align:top;
+  border-bottom:1px solid #f5eaf0;
+}
+
+th {
+  color:var(--muted);
+  font-weight:500;
+  background:#fffafd;
+}
+
+.review-message {
+  max-width:300px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+
+.status {
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  text-transform:capitalize;
+}
+
+.status.pending {
+  background:#fff2d9;
+  color:#94651c;
+}
+
+.status.approved {
+  background:#e6f5e9;
+  color:#39754a;
+}
+
+.status.rejected {
+  background:#fae7e9;
+  color:#a34c62;
+}
+
+.action-btn {
+  margin:3px;
+  padding:7px 10px;
+  font-size:12px;
+}
+
+.approve-btn {
+  background:#e6f5e9;
+  color:#39754a;
+}
+
+.reject-btn {
+  background:#fff2d9;
+  color:#94651c;
+}
+
+.delete-btn {
+  background:#fae7e9;
+  color:#a34c62;
+}
+
+#message {
+  margin-top:15px;
+  font-size:13px;
+}
+
+#loginScreen {
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.login-card {
+  width:100%;
+  max-width:420px;
+  padding:35px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:22px;
+  text-align:center;
+}
+
+.login-card h1 {
+  color:var(--deep-pink);
+  font:600 32px 'Playfair Display',serif;
+}
+
+.login-card input {
+  width:100%;
+  padding:13px;
+  margin:8px 0;
+  border:1px solid var(--border);
+  border-radius:10px;
+  font:inherit;
+}
+
+.primary-btn {
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  border:0;
+  border-radius:10px;
+  color:white;
+  background:var(--deep-pink);
+  font-weight:600;
+}
+
+#loginMessage { color:#a34c62; font-size:13px; }
+
+#reviewsPage { display:none; }
+
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  padding:25px;
+}
+
+.menu-toggle {
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:1002;
+  background:#a85f7c;
+  color:white;
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-size:20px;
+}
+
+.sidebar {
+  position:fixed;
+  top:0;
+  left:-280px;
+  width:270px;
+  height:100vh;
+  background:white;
+  z-index:1001;
+  padding:80px 18px 25px;
+  transition:left .3s;
+  box-shadow:4px 0 20px #00000012;
+}
+
+.sidebar.open { left:0; }
+
+.sidebar h2 {
+  font:600 25px 'Playfair Display',serif;
+  color:#a85f7c;
+  margin:0 0 25px;
+}
+
+.sidebar a {
+  display:block;
+  text-decoration:none;
+  color:#57434b;
+  padding:13px 15px;
+  border-radius:10px;
+  margin:6px 0;
+  font-size:14px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background:#faedf2;
+  color:#a85f7c;
+}
+
+.sidebar-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0006;
+  z-index:1000;
+}
+
+.sidebar-overlay.show { display:block; }
+
+@media(max-width:650px) {
+  .topbar { padding:15px 4%; }
+  .topbar h1 { font-size:22px; }
+  main { margin:22px auto; }
+  .panel { padding:15px; }
+  .stats { grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <h2>Therapy Pages ♡</h2>
+  <a href="admin.html">Dashboard</a>
+  <a href="orders.html">Recent Orders</a>
+  <a href="products.html">Products</a>
+  <a href="create-order.html">Create New Order</a>
+  <a href="find-order.html">Find an Order</a>
+  <a href="reviews.html" class="active">Customer Reviews</a>
+</nav>
+
+<section id="loginScreen">
+  <div class="login-card">
+    <h1>Therapy Pages ♡</h1>
+    <p>Administrator Login</p>
+
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="Administrator email" required>
+      <input id="password" type="password" placeholder="Password" required>
+      <button class="primary-btn" id="loginButton" type="submit">Sign In</button>
+    </form>
+
+    <div id="loginMessage"></div>
+  </div>
+</section>
+
+<section id="reviewsPage">
+
+  <header class="topbar">
+    <div>
+      <h1>Therapy Pages ♡</h1>
+      <small>BUSINESS MANAGEMENT</small>
+    </div>
+    <button class="logout-btn" id="logoutButton">Log Out</button>
+  </header>
+
+  <main>
+
+    <h2>Customer Reviews 💗</h2>
+    <p>Manage the lovely words your customers share about Therapy Pages.</p>
+
+    <div class="stats">
+      <div class="stat-card">
+        <span>Pending Reviews</span>
+        <strong id="pendingCount">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Approved Reviews</span>
+        <strong id="approvedCount">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Rejected Reviews</span>
+        <strong id="rejectedCount">0</strong>
+      </div>
+    </div>
+
+    <div class="panel">
+
+      <div class="panel-heading">
+        <h3>All Customer Reviews</h3>
+        <button class="refresh-btn" id="refreshButton">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Rating</th>
+              <th>Review</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="reviewsTable">
+            <tr>
+              <td colspan="6">Loading reviews...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="message"></div>
+
+    </div>
+  </main>
+
+  <footer>Made with love ♡ Therapy Pages</footer>
+
+</section>
+
+<script>
+const SUPABASE_URL = "https://yvtkfclkxfurbadpssab.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cg-I94f1E7lJYQgsHYTyqw_Cmq-Xvja";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const loginScreen = document.getElementById("loginScreen");
+const reviewsPage = document.getElementById("reviewsPage");
+const message = document.getElementById("message");
+
+function showLogin() {
+  reviewsPage.style.display = "none";
+  loginScreen.style.display = "flex";
+}
+
+function showReviews() {
+  loginScreen.style.display = "none";
+  reviewsPage.style.display = "block";
+}
+
+function addCell(row,value) {
+  const cell = document.createElement("td");
+  cell.textContent = value ?? "—";
+  row.appendChild(cell);
+  return cell;
+}
+
+function getReviewStatus(review) {
+  if (review.review_status) return review.review_status;
+  return review.is_approved ? "approved" : "pending";
+}
+
+async function loadReviews() {
+  message.textContent = "Loading reviews...";
+
+  const table = document.getElementById("reviewsTable");
+
+  try {
+    const { data: reviews, error } = await supabaseClient
+      .from("reviews")
+      .select("id, customer_name, rating, review_text, created_at, is_approved, review_status")
+      .order("created_at", { ascending:false });
+
+    if (error) throw error;
+
+    table.replaceChildren();
+
+    let pending = 0;
+    let approved = 0;
+    let rejected = 0;
+
+    reviews.forEach(review => {
+      const status = getReviewStatus(review);
+
+      if (status === "pending") pending++;
+      if (status === "approved") approved++;
+      if (status === "rejected") rejected++;
+    });
+
+    document.getElementById("pendingCount").textContent = pending;
+    document.getElementById("approvedCount").textContent = approved;
+    document.getElementById("rejectedCount").textContent = rejected;
+
+    if (!reviews.length) {
+      const row = table.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 6;
+      cell.textContent = "No customer reviews yet. 💗";
+      message.textContent = "";
+      return;
+    }
+
+    reviews.forEach(review => {
+      const row = table.insertRow();
+      const status = getReviewStatus(review);
+
+      addCell(row,review.customer_name);
+
+      const ratingCell = addCell(row,"");
+      ratingCell.textContent = "⭐".repeat(review.rating);
+
+      const reviewCell = addCell(row,review.review_text);
+      reviewCell.className = "review-message";
+
+      addCell(
+        row,
+        new Date(review.created_at).toLocaleDateString()
+      );
+
+      const statusCell = addCell(row,"");
+      const statusLabel = document.createElement("span");
+      statusLabel.className = "status " + status;
+      statusLabel.textContent = status;
+      statusCell.appendChild(statusLabel);
+
+      const actionsCell = addCell(row,"");
+
+      if (status !== "approved") {
+        const approveButton = document.createElement("button");
+        approveButton.className = "action-btn approve-btn";
+        approveButton.textContent = "Approve";
+
+        approveButton.addEventListener("click",() => {
+          updateReview(review.id,"approved");
+        });
+
+        actionsCell.appendChild(approveButton);
+      }
+
+      if (status !== "rejected") {
+        const rejectButton = document.createElement("button");
+        rejectButton.className = "action-btn reject-btn";
+        rejectButton.textContent = "Reject";
+
+        rejectButton.addEventListener("click",() => {
+          updateReview(review.id,"rejected");
+        });
+
+        actionsCell.appendChild(rejectButton);
+      }
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "action-btn delete-btn";
+      deleteButton.textContent = "Delete";
+
+      deleteButton.addEventListener("click",() => {
+        deleteReview(review.id,review.customer_name);
+      });
+
+      actionsCell.appendChild(deleteButton);
+    });
+
+    message.textContent = "";
+
+  } catch(error) {
+    message.textContent = "Could not load reviews: " + error.message;
+  }
+}
+
+async function updateReview(reviewId,newStatus) {
+  message.textContent = "Updating review...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("reviews")
+      .update({
+        review_status:newStatus,
+        is_approved:newStatus === "approved"
+      })
+      .eq("id",reviewId);
+
+    if (error) throw error;
+
+    message.textContent =
+      newStatus === "approved"
+        ? "Review approved successfully! 💗"
+        : "Review rejected successfully.";
+
+    await loadReviews();
+
+  } catch(error) {
+    message.textContent = "Could not update review: " + error.message;
+  }
+}
+
+async function deleteReview(reviewId,customerName) {
+  const confirmed = confirm(
+    "Are you sure you want to permanently delete the review from " +
+    customerName +
+    "?\n\nThis action cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  message.textContent = "Deleting review...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("reviews")
+      .delete()
+      .eq("id",reviewId);
+
+    if (error) throw error;
+
+    message.textContent = "Review deleted successfully.";
+
+    await loadReviews();
+
+  } catch(error) {
+    message.textContent = "Could not delete review: " + error.message;
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+  button.textContent = "Signing in...";
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email:document.getElementById("email").value.trim(),
+      password:document.getElementById("password").value
+    });
+
+    if (error) throw error;
+
+    showReviews();
+    await loadReviews();
+
+  } catch(error) {
+    document.getElementById("loginMessage").textContent = error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+});
+
+document.getElementById("refreshButton").addEventListener("click",loadReviews);
+
+document.getElementById("logoutButton").addEventListener("click",async () => {
+  await supabaseClient.auth.signOut();
+  showLogin();
+});
+
+async function checkSession() {
+  const { data:{session}, error } = await supabaseClient.auth.getSession();
+
+  if (error || !session) {
+    showLogin();
+    return;
+  }
+
+  showReviews();
+  await loadReviews();
+}
+
+checkSession();
+
+</script>
+
+<script>
+function toggleMenu() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("show");
+}
+</script>
+
+</body>
+</html>
+
