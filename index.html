@@ -2249,7 +2249,7 @@ function addToCart(productId) {
           View My Cart
         </button>
 
-        <button onclick="document.getElementById('cart-notification').classList.remove('show');"
+        <button onclick="document.getElementById('${product.category === "Kids" ? "kids" : "adult"}').scrollIntoView({behavior:'smooth'}); document.getElementById('cart-notification').classList.remove('show');"
           style="padding:10px 16px; border:1px solid #b83270; border-radius:20px; background:white; color:#b83270; cursor:pointer;">
           Continue Shopping
         </button>
