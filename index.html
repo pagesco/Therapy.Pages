@@ -2212,6 +2212,7 @@ function displayProducts() {
 
 ===================================== */
 
+
 function addToCart(productId) {
 
   const product = products.find(
@@ -2237,21 +2238,33 @@ function addToCart(productId) {
 
   const notification = document.getElementById("cart-notification");
 
-  notification.textContent = `💗 Added to cart. Good Choice!`;
+  notification.innerHTML = `
+    <div style="text-align:center;">
+      <div>💗 Added to Cart! Good Choice!</div>
+
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+
+        <button onclick="document.getElementById('cart').scrollIntoView({behavior:'smooth'});"
+          style="padding:10px 16px; border:0; border-radius:20px; background:#b83270; color:white; cursor:pointer;">
+          View My Cart
+        </button>
+
+        <button onclick="document.getElementById('cart-notification').classList.remove('show');"
+          style="padding:10px 16px; border:1px solid #b83270; border-radius:20px; background:white; color:#b83270; cursor:pointer;">
+          Continue Shopping
+        </button>
+
+      </div>
+    </div>
+  `;
 
   notification.classList.add("show");
 
   clearTimeout(window.cartNotificationTimer);
 
-  window.cartNotificationTimer = setTimeout(() => {
-    notification.classList.remove("show");
-  }, 2500);
-
 }
-/* =====================================
-
+/*===========================
    7. UPDATE BASKET
-
 ===================================== */
 
 function renderCart() {
