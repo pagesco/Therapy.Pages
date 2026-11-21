@@ -268,6 +268,36 @@ if (product) {
     "Please return to our collection and select a product.";
   document.getElementById("addToCartButton").disabled = true;
 }
+
+  document.getElementById("addToCartButton").addEventListener("click", function() {
+  if (!product || product.price === null) return;
+
+  const quantity = Number(document.getElementById("quantity").value);
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    document.getElementById("message").textContent =
+      "Please enter a valid quantity.";
+    return;
+  }
+
+  let cart = JSON.parse(localStorage.getItem("therapyPagesCart") || "[]");
+
+  const existingItem = cart.find(item => item.id === product.id);
+
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    cart.push({
+      ...product,
+      quantity: quantity
+    });
+  }
+
+  localStorage.setItem("therapyPagesCart", JSON.stringify(cart));
+
+  document.getElementById("message").textContent =
+    "💗 Added to your cart! Good Choice!";
+});
 </script>
 
 </body>
