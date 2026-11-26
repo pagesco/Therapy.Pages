@@ -2693,7 +2693,7 @@ async function checkoutWhatsApp() {
   const customerPhone = document.getElementById("checkoutCustomerPhone").value.trim();
   const customerEmail = document.getElementById("checkoutCustomerEmail").value.trim();
 
-  if (!customerName || !customerPhone) {
+  if (!customerName || !customerPhone || !customerEmail) {
     alert("Please enter your name and phone number before checking out.");
     return;
   }
