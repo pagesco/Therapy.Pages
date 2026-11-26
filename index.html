@@ -2758,6 +2758,7 @@ async function checkoutWhatsApp() {
       } catch (emailError) {
         console.error("Email sending failed:", emailError);
       }
+      const invoiceNumber = data[0].invoice_number;
 
        let total = 0;
 
