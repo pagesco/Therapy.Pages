@@ -2694,7 +2694,7 @@ async function checkoutWhatsApp() {
   const customerEmail = document.getElementById("checkoutCustomerEmail").value.trim();
 
   if (!customerName || !customerPhone || !customerEmail) {
-    alert("Please enter your name and phone number before checking out.");
+    alert("Please enter your name, phone number, and email address before checking out.");
     return;
   }
 
@@ -2713,9 +2713,7 @@ async function checkoutWhatsApp() {
     quantity: item.quantity
   }));
 
-  // Open a tab now so the browser does not block WhatsApp later
-  const whatsappTab = window.open("about:blank", "_blank");
-
+  
   try {
 
     // Save the order in Supabase
@@ -2762,53 +2760,16 @@ async function checkoutWhatsApp() {
 
        let total = 0;
 
-    let message =
-      `Good day, ${BUSINESS_NAME}! ❤️\n\n` +
-      `I would like to place an order:\n\n` +
-      `INVOICE NUMBER: ${invoiceNumber}\n\n` +
-      `CUSTOMER NAME: ${customerName}\n` +
-      `PHONE NUMBER: ${customerPhone}\n\n`;
-
-    cart.forEach(item => {
-
-      const subtotal = item.price * item.quantity;
-      total += subtotal;
-
-      message +=
-        `📚 ${item.name}\n` +
-        `Quantity: ${item.quantity}\n` +
-        `Subtotal: ${formatPrice(subtotal)}\n\n`;
-
-    });
-
-    message +=
-      `TOTAL: ${formatPrice(total)}\n\n` +
-      `PAYMENT METHOD: ${paymentChoice.value}\n\n` +
-      `Please confirm my order and let me know the pickup or delivery arrangements.\n\n` +
-      `Thank you! ❤️`;
-
-    // Open WhatsApp with the saved order details
-    const whatsappURL =
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-    if (whatsappTab && !whatsappTab.closed) {
-      whatsappTab.location.href = whatsappURL;
-    } else {
-      sendWhatsApp(message);
-    }
-
-    alert(
-      `Your order has been saved successfully! ❤️\n\n` +
-      `Your invoice number is: ${invoiceNumber}`
-    );
+       
+       alert(
+        `Your order has been placed successfully! ❤️\n\n` +
+        `Your invoice number is: ${invoiceNumber}\n\n` +
+        `A confirmation email has been sent to your email address. We will contact you shortly to arrange the next steps.`
+      );
 
   } catch (error) {
 
-    if (whatsappTab && !whatsappTab.closed) {
-      whatsappTab.close();
-    }
-
-    console.error("Checkout error:", error);
+       console.error("Checkout error:", error);
 
     alert(
       "Sorry, we couldn't save your order.\n\n" +
