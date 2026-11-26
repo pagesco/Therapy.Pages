@@ -2740,7 +2740,26 @@ async function checkoutWhatsApp() {
 
     const invoiceNumber = data[0].invoice_number;
 
-    let total = 0;
+     // Send order notification emails
+      try {
+        const { data: emailData, error: emailError } =
+          await supabaseClient.functions.invoke("smart-api", {
+            body: {
+              order_id: data[0].order_id
+            }
+          });
+      
+        if (emailError) {
+          console.error("Email notification error:", emailError);
+        } else {
+          console.log("Order emails processed successfully.");
+        }
+      
+      } catch (emailError) {
+        console.error("Email sending failed:", emailError);
+      }
+
+       let total = 0;
 
     let message =
       `Good day, ${BUSINESS_NAME}! ❤️\n\n` +
