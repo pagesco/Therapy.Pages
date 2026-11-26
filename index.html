@@ -996,6 +996,61 @@ footer small {
 
 }
 
+      /* =========================
+      HOW ORDERS WORK
+   ========================= */
+   
+   #how-orders-work {
+     padding: 70px 20px;
+   }
+   
+   .order-steps {
+     display: grid;
+     grid-template-columns: repeat(3, minmax(0, 1fr));
+     gap: 25px;
+     max-width: 1100px;
+     margin: 0 auto;
+   }
+   
+   .order-step {
+     background: rgba(255, 255, 255, 0.9);
+     border: 1px solid var(--border);
+     border-radius: 22px;
+     padding: 28px 22px;
+     text-align: center;
+     box-shadow: 0 8px 24px rgba(184, 50, 112, 0.06);
+     transition: transform 0.3s ease, box-shadow 0.3s ease;
+   }
+   
+   .order-step:hover {
+     transform: translateY(-4px);
+     box-shadow: 0 10px 25px rgba(184, 50, 112, 0.12);
+   }
+   
+   .order-icon {
+     font-size: 42px;
+     margin-bottom: 12px;
+   }
+   
+   .order-step h3 {
+     color: var(--dark-pink);
+     margin-bottom: 12px;
+     font-family: "Playfair Display", serif;
+   }
+   
+   .order-step p {
+     color: #856d79;
+     line-height: 1.7;
+     font-size: 14px;
+   }
+   
+   @media (max-width: 850px) {
+     .order-steps {
+       grid-template-columns: 1fr;
+       max-width: 550px;
+     }
+   }
+
 /* =========================
 
    RESPONSIVE DESIGN
