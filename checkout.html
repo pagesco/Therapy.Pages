@@ -56,7 +56,7 @@ h1 {
   color: var(--deep-pink);
 }
 
-.checkout-card {
+.-card {
   background: white;
   padding: 25px;
   border-radius: 18px;
@@ -67,6 +67,68 @@ footer {
   text-align: center;
   padding: 25px;
   color: var(--deep-pink);
+}
+  .checkout-card h2 {
+  color: var(--deep-pink);
+}
+
+#checkoutForm {
+  margin-top: 20px;
+}
+
+#checkoutForm label {
+  display: block;
+  margin: 16px 0 7px;
+  font-weight: 500;
+}
+
+#checkoutForm input:not([type="radio"]) {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+#checkoutForm input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(231, 84, 145, 0.1);
+}
+
+#checkoutForm input[type="radio"] {
+  accent-color: var(--pink);
+  margin-right: 8px;
+}
+
+#checkoutForm button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 15px;
+  border: none;
+  border-radius: 30px;
+  background: var(--pink);
+  color: white;
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#checkoutForm button:hover {
+  background: var(--deep-pink);
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+    margin: 20px auto;
+  }
+
+  .checkout-card {
+    padding: 18px;
+  }
 }
 </style>
 </head>
@@ -79,7 +141,7 @@ footer {
 
 <main class="container">
 
-  <h1>Checkout ♡</h1>
+  <h1> ♡</h1>
 
   <p style="text-align:center;">
     You're one step closer to your new favourite coloring book!
@@ -87,9 +149,79 @@ footer {
 
   <div class="checkout-card">
 
-    <h2>Complete Your Order</h2>
+    <h2>Your Order Summary ♡</h2>
+  
+    <div id="checkout-items"></div>
 
-    <p>Your checkout details will appear here.</p>
+    <h2 style="margin-top:30px;">Your Details ♡</h2>
+
+    <form id="checkoutForm">
+    
+      <label for="checkoutCustomerName">Full Name</label>
+      <input
+        type="text"
+        id="checkoutCustomerName"
+        placeholder="Enter your full name"
+        required
+      >
+    
+      <label for="checkoutCustomerPhone">Phone Number</label>
+      <input
+        type="tel"
+        id="checkoutCustomerPhone"
+        placeholder="Enter your phone number"
+        required
+      >
+    
+      <label for="checkoutCustomerEmail">Email Address</label>
+      <input
+        type="email"
+        id="checkoutCustomerEmail"
+        placeholder="Enter your email address"
+        required
+      >
+    
+      <h3>Payment Method</h3>
+    
+      <label>
+        <input type="radio" name="paymentMethod" value="Cash" required>
+        Cash
+      </label>
+    
+      <label>
+        <input type="radio" name="paymentMethod" value="Bank Transfer">
+        Bank Transfer
+      </label>
+    
+      <label>
+        <input type="radio" name="paymentMethod" value="Online Payment">
+        Online Payment
+      </label>
+    
+      <button type="submit" class="btn">
+        Place Order
+      </button>
+    
+    </form>
+  
+    <div style="
+      border-top:1px solid var(--border);
+      margin-top:20px;
+      padding-top:15px;
+      display:flex;
+      justify-content:space-between;
+      font-size:20px;
+      font-weight:bold;
+    ">
+      <span>Total</span>
+      <span id="checkout-total">J$0</span>
+    </div>
+  
+    <div style="margin-top:25px;">
+      <a href="index.html#cart" style="color:var(--deep-pink);">
+        ← Return to Cart
+      </a>
+    </div>
 
   </div>
 
@@ -98,6 +230,76 @@ footer {
 <footer>
   Heal | Grow | Thrive ♡
 </footer>
+
+  <script>
+
+  const cart = JSON.parse(
+    localStorage.getItem("therapyPagesCart") || "[]"
+  );
+  
+  function formatPrice(amount) {
+    return "J$" + Number(amount).toLocaleString("en-JM");
+  }
+  
+  function renderCheckout() {
+  
+    const container = document.getElementById("checkout-items");
+    const totalElement = document.getElementById("checkout-total");
+  
+    if (!cart.length) {
+      container.innerHTML = `
+        <p>Your cart is empty. 💗</p>
+        <a href="index.html#cart" style="color:var(--deep-pink);">
+          Return to shopping
+        </a>
+      `;
+  
+      totalElement.textContent = "J$0";
+      return;
+    }
+  
+    let total = 0;
+  
+    container.innerHTML = "";
+  
+    cart.forEach(item => {
+  
+      const subtotal = Number(item.price) * Number(item.quantity);
+      total += subtotal;
+  
+      const itemElement = document.createElement("div");
+  
+      itemElement.style.cssText = `
+        display:flex;
+        justify-content:space-between;
+        gap:15px;
+        padding:15px 0;
+        border-bottom:1px solid var(--border);
+      `;
+  
+      itemElement.innerHTML = `
+        <div>
+          <strong>${item.name}</strong>
+          <p style="margin:5px 0;color:#927d85;">
+            Quantity: ${item.quantity}
+          </p>
+          <small>${formatPrice(item.price)} each</small>
+        </div>
+  
+        <strong>${formatPrice(subtotal)}</strong>
+      `;
+  
+      container.appendChild(itemElement);
+  
+    });
+  
+    totalElement.textContent = formatPrice(total);
+  
+  }
+  
+  renderCheckout();
+  
+  </script>
 
 </body>
 </html>
